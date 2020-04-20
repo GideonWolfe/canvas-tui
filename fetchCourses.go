@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
   "github.com/spf13/viper"
-  "fmt"
+  // "fmt"
   "time"
 )
 
