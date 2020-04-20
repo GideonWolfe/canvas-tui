@@ -9,6 +9,18 @@ import (
   // "fmt"
 )
 
+type Calendar struct {
+  Url string `json:"ics,omitempty"`
+}
+
+type Enrollments struct {
+  Type string `json:"type,omitempty"`
+  Role string `json:"role,omitempty"`
+  RoleID int `json:"role_id,omitempty"`
+  UserID int `json:"user_id,omitempty"`
+  EnrollmentState string `json:"enrollment_state,omitempty"`
+  Limit_privileges_to_course_section bool `json:"limit_privileges_to_course_section,omitempty"`
+}
 
 type Course struct {
   Id int `json:"id,omitempty"`
@@ -22,7 +34,7 @@ type Course struct {
   Course_code string `json:"course_code,omitempty"`
   Default_view string `json:"default_view,omitempty"`
   Root_account_id int `json:"root_account_id,omitempty"`
-  Enrollment_term_id int`json:"enrollment_term_id,omitempty `
+  Enrollment_term_id int`json:"enrollment_term_id,omitempty"`
   License string `json:"license,omitempty"`
   Grade_passback_settting string `json:"grade_passback_settting,omitempty"`
   End_at string `json:"end_at,omitempty"`
@@ -31,12 +43,10 @@ type Course struct {
   Storage_quota_mb int `json:"storage_quota_mb,omitempty"`
   Is_public_to_auth_users bool `json:"is_public_to_auth_users,omitempty"`
   Apply_assignment_group_weights bool `json:"apply_assignment_group_weights,omitempty"`
-  Calendar []string `json:"-"`
-  // Calendar []string `json:"calendar,omitempty"`
+  Coursecalendar Calendar `json:"calendar"`
   Time_zone string `json:"time_zone,omitempty"`
   Blueprint bool `json:"blueprint,omitempty"`
-  Enrollments []string `json:"-"`
-  // Enrollments []string `json:"enrollments,omitempty"`
+  // Courseenrollments Enrollments `json:"enrollments,omitempty"`
   Hide_final_grades bool `json:"hide_final_grades,omitempty"`
   Workflow_state string `json:"workflow_state,omitempty"`
   Restrict_enrollments_to_course_dates bool `json:"restrict_enrollments_to_course_dates,omitempty"`
