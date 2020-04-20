@@ -6,54 +6,50 @@ import (
 	"log"
 	"net/http"
   "github.com/spf13/viper"
-  // "fmt"
+  "fmt"
+  "time"
 )
 
-type Calendar struct {
-  Url string `json:"ics,omitempty"`
-}
-
-type Enrollments struct {
-  Type string `json:"type,omitempty"`
-  Role string `json:"role,omitempty"`
-  RoleID int `json:"role_id,omitempty"`
-  UserID int `json:"user_id,omitempty"`
-  EnrollmentState string `json:"enrollment_state,omitempty"`
-  Limit_privileges_to_course_section bool `json:"limit_privileges_to_course_section,omitempty"`
-}
-
 type Course struct {
-  Id int `json:"id,omitempty"`
-  Name string `json:"name,omitempty"`
-  Account_id int `json:"account_id,omitempty"`
-  Uuid string `json:"uuid,omitempty"`
-  Start_at string `json:"start_at,omitempty"`
-  Grading_standard_id string `json:"grading_standard_id,omitempty"`
-  Is_public bool `json:"is_public,omitempty"`
-  Created_at string `json:"created_at,omitempty"`
-  Course_code string `json:"course_code,omitempty"`
-  Default_view string `json:"default_view,omitempty"`
-  Root_account_id int `json:"root_account_id,omitempty"`
-  Enrollment_term_id int`json:"enrollment_term_id,omitempty"`
-  License string `json:"license,omitempty"`
-  Grade_passback_settting string `json:"grade_passback_settting,omitempty"`
-  End_at string `json:"end_at,omitempty"`
-  Public_syllabus bool `json:"public_syllabus,omitempty"`
-  Public_syllabus_to_auth bool `json:"public_syllabus_to_auth,omitempty"`
-  Storage_quota_mb int `json:"storage_quota_mb,omitempty"`
-  Is_public_to_auth_users bool `json:"is_public_to_auth_users,omitempty"`
-  Apply_assignment_group_weights bool `json:"apply_assignment_group_weights,omitempty"`
-  Coursecalendar Calendar `json:"calendar"`
-  Time_zone string `json:"time_zone,omitempty"`
-  Blueprint bool `json:"blueprint,omitempty"`
-  // Courseenrollments Enrollments `json:"enrollments,omitempty"`
-  Hide_final_grades bool `json:"hide_final_grades,omitempty"`
-  Workflow_state string `json:"workflow_state,omitempty"`
-  Restrict_enrollments_to_course_dates bool `json:"restrict_enrollments_to_course_dates,omitempty"`
+	ID                               int           `json:"id"`
+	Name                             string        `json:"name"`
+	AccountID                        int           `json:"account_id"`
+	UUID                             string        `json:"uuid"`
+	StartAt                          time.Time     `json:"start_at"`
+	GradingStandardID                interface{}   `json:"grading_standard_id"`
+	IsPublic                         bool          `json:"is_public"`
+	CreatedAt                        time.Time     `json:"created_at"`
+	CourseCode                       string        `json:"course_code"`
+	DefaultView                      string        `json:"default_view"`
+	RootAccountID                    int           `json:"root_account_id"`
+	EnrollmentTermID                 int           `json:"enrollment_term_id"`
+	License                          string        `json:"license"`
+	GradePassbackSetting             interface{}   `json:"grade_passback_setting"`
+	EndAt                            time.Time     `json:"end_at"`
+	PublicSyllabus                   bool          `json:"public_syllabus"`
+	PublicSyllabusToAuth             bool          `json:"public_syllabus_to_auth"`
+	StorageQuotaMb                   int           `json:"storage_quota_mb"`
+	IsPublicToAuthUsers              bool          `json:"is_public_to_auth_users"`
+	ApplyAssignmentGroupWeights      bool          `json:"apply_assignment_group_weights"`
+	Calendar                         Calendar      `json:"calendar"`
+	TimeZone                         string        `json:"time_zone"`
+	Blueprint                        bool          `json:"blueprint"`
+	Enrollments                      []Enrollments `json:"enrollments"`
+	HideFinalGrades                  bool          `json:"hide_final_grades"`
+	WorkflowState                    string        `json:"workflow_state"`
+	RestrictEnrollmentsToCourseDates bool          `json:"restrict_enrollments_to_course_dates"`
+	OverriddenCourseVisibility       string        `json:"overridden_course_visibility,omitempty"`
 }
-
-type Response struct {
-  Collection []Course
+type Calendar struct {
+	Ics string `json:"ics"`
+}
+type Enrollments struct {
+	Type                           string `json:"type"`
+	Role                           string `json:"role"`
+	RoleID                         int    `json:"role_id"`
+	UserID                         int    `json:"user_id"`
+	EnrollmentState                string `json:"enrollment_state"`
+	LimitPrivilegesToCourseSection bool   `json:"limit_privileges_to_course_section"`
 }
 
 
@@ -78,7 +74,10 @@ func fetchCourses() *[]Course {
       log.Println("Error on response.\n[ERRO] -", err)
   }
 
+  defer resp.Body.Close()
+
   body, _ := ioutil.ReadAll(resp.Body)
+  // fmt.Println(string(body))
   courses := make([]Course,0)
   err = json.Unmarshal([]byte(body), &courses)
   if err != nil {
