@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
   "github.com/spf13/viper"
-  "fmt"
+  // "fmt"
   "time"
   "bytes"
 )
@@ -26,7 +26,7 @@ type Course struct {
 	EnrollmentTermID                 int           `json:"enrollment_term_id"`
 	License                          string        `json:"license"`
 	GradePassbackSetting             interface{}   `json:"grade_passback_setting"`
-	EndAt                            time.Time     `json:"end_at"`
+  EndAt                            time.Time     `json:"end_at"`
 	PublicSyllabus                   bool          `json:"public_syllabus"`
 	PublicSyllabusToAuth             bool          `json:"public_syllabus_to_auth"`
 	StorageQuotaMb                   int           `json:"storage_quota_mb"`
@@ -57,7 +57,7 @@ type Enrollments struct {
 func fetchCourses() *[]Course {
 
   // Create URL string from config file
-  url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60"
+  url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60&enrollment_state=active"
   // url := viper.Get("canvasdomain").(string) + "api/v1/courses/"
 
   // Create a Bearer string by appending string access token
@@ -65,12 +65,12 @@ func fetchCourses() *[]Course {
 
   type Params struct{
     PerPage int `json:"per_page"`
-    EnrollmentType string `json:"enrollment_type"`
+    // EnrollmentType string `json:"enrollment_type"`
   }
 
-  m := Params{50, "ta"}
+  m := Params{50}
   rawbody, err := json.Marshal(m)
-  fmt.Println(string(rawbody))
+  // fmt.Println(string(rawbody))
   params := bytes.NewReader(rawbody)
   // params := bytes.NewBuffer(rawbody)
 

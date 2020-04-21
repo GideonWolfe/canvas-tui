@@ -52,7 +52,9 @@ func main() {
   var titles []string
   var courses *[]Course = fetchCourses()
   for _, crs := range *courses {
-    titles = append(titles, crs.CourseCode)
+    if crs.EndAt.IsZero() {
+      titles = append(titles, crs.CourseCode)
+    }
   }
   
   tabpane := widgets.NewTabPane(titles...)
