@@ -3,6 +3,7 @@ package main
 import (
 	"log"
   "fmt"
+  "time"
   "os"
   "github.com/spf13/viper"
 	ui "github.com/gizak/termui/v3"
@@ -38,17 +39,18 @@ func main() {
 
   readConfig()
 
-  // var courses *[]Course = fetchCourses()
-  // var assignments *[]Assignment = fetchAssignments(1263956)
-  // fetchAssignments(1263956)
+  
+  // declare grid and set terminal dimensions
+	grid := ui.NewGrid()
+	termWidth, termHeight := ui.TerminalDimensions()
+	grid.SetRect(0, 0, termWidth, termHeight)
 
-  // Phony bar graph to show
-  bc := widgets.NewBarChart()
-	bc.Title = "Bar Chart"
-	bc.Data = []float64{3, 2, 5, 3, 9, 5, 3, 2, 5, 8, 3, 2, 4, 5, 3, 2, 5, 7, 5, 3, 2, 6, 7, 4, 6, 3, 6, 7, 8, 3, 6, 4, 5, 3, 2, 4, 6, 4, 8, 5, 9, 4, 3, 6, 5, 3, 6}
-	bc.SetRect(5, 5, 35, 10)
-	bc.Labels = []string{"S0", "S1", "S2", "S3", "S4", "S5"}
+  // Dummy placeholder widget
+  p0 := widgets.NewParagraph()
+	p0.Text = "Some Text"
+	p0.Border = true
 
+  // Titles for the tab widget
   var titles []string
   var courses *[]Course = fetchCourses()
   for _, crs := range *courses {
@@ -56,39 +58,68 @@ func main() {
       titles = append(titles, crs.CourseCode)
     }
   }
-  
+
+  // declare tab widget
   tabpane := widgets.NewTabPane(titles...)
-	tabpane.SetRect(0, 1, 180, 4)
 	tabpane.Border = true
+
+  // defining grid layout
+  grid.Set(
+		ui.NewRow(1.0/20,
+			ui.NewCol(1.0, tabpane),
+		),
+		ui.NewRow(1.0/3,
+			ui.NewCol(1.0/2, p0),
+		),
+  )
+  
 
 	renderTab := func() {
 		switch tabpane.ActiveTabIndex {
 		case 0:
-			ui.Render(bc)
+			ui.Render(p0)
 		case 1:
-			ui.Render(bc)
+			ui.Render(p0)
+		case 2:
+			ui.Render(p0)
 		}
 	}
 
-	ui.Render(tabpane)
+	ui.Render(grid)
 
-	uiEvents := ui.PollEvents()
   // Event polling loop
+  tickerCount := 1
+	uiEvents := ui.PollEvents()
+	ticker := time.NewTicker(time.Second).C
 	for {
-		e := <-uiEvents
-		switch e.ID {
-		case "q", "<C-c>":
-			return
-		case "h":
-			tabpane.FocusLeft()
-			ui.Clear()
-			ui.Render(tabpane)
-			renderTab()
-		case "l":
-			tabpane.FocusRight()
-			ui.Clear()
-			ui.Render(tabpane)
-			renderTab()
+    select {
+    case e := <-uiEvents:
+      switch e.ID {
+      case "q", "<C-c>":
+        return
+      case "h":
+        tabpane.FocusLeft()
+        ui.Clear()
+        ui.Render(tabpane)
+        renderTab()
+      case "l":
+        tabpane.FocusRight()
+        ui.Clear()
+        ui.Render(tabpane)
+        renderTab()
+      case "<Resize>":
+				payload := e.Payload.(ui.Resize)
+				grid.SetRect(0, 0, payload.Width, payload.Height)
+				ui.Clear()
+				ui.Render(grid)
+      }
+		case <-ticker:
+			if tickerCount == 100 {
+				return
+			}
+      ui.Render(grid)
+			tickerCount++
 		}
 	}
+
 }
