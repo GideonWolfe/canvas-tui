@@ -6,8 +6,9 @@ import (
 	"log"
 	"net/http"
   "github.com/spf13/viper"
-  // "fmt"
+  "fmt"
   "time"
+  "bytes"
 )
 
 type Course struct {
@@ -56,18 +57,30 @@ type Enrollments struct {
 func fetchCourses() *[]Course {
 
   // Create URL string from config file
-  url := viper.Get("canvasdomain").(string) + "api/v1/courses/"
+  url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60"
+  // url := viper.Get("canvasdomain").(string) + "api/v1/courses/"
 
   // Create a Bearer string by appending string access token
   var bearer = "Bearer " + viper.Get("canvastoken").(string)
 
+  type Params struct{
+    PerPage int `json:"per_page"`
+    EnrollmentType string `json:"enrollment_type"`
+  }
+
+  m := Params{50, "ta"}
+  rawbody, err := json.Marshal(m)
+  fmt.Println(string(rawbody))
+  params := bytes.NewReader(rawbody)
+  // params := bytes.NewBuffer(rawbody)
+
   // Create a new request using http
-  req, err := http.NewRequest("GET", url, nil)
+  req, err := http.NewRequest("GET", url, params)
 
   // add authorization header to the req
   req.Header.Add("Authorization", bearer)
 
-  // Send req using http Client
+    // Send req using http Client
   client := &http.Client{}
   resp, err := client.Do(req)
   if err != nil {
