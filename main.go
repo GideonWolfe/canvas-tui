@@ -41,28 +41,48 @@ func createMainTabPane(courses *[]Course) *widgets.TabPane {
 func renderCourseGrid(someVal string) *ui.Grid {
   // dummy placeholder widget
   p0 := widgets.NewParagraph()
+  p0.Title = "Syllabus"
 	p0.Text = someVal
 	p0.Border = true
 
   // pie chart to eventually break down course points
   pc := widgets.NewPieChart()
-	pc.Title = "Pie Chart"
+	pc.Title = "Course Breakdown"
 	pc.Data = []float64{.10, .10, .05, .20, .05, .13, .14, .25}
 	pc.AngleOffset = -.5 * math.Pi
 	pc.LabelFormatter = func(i int, v float64) string {
 		return fmt.Sprintf("%.02f", v)
 	}
 
+  // list to select view of course
+	l := widgets.NewList()
+	l.Title = "Pages"
+  l.Rows = []string{
+		"[0] Assignmets",
+		"[1] Quizzes",
+		"[2] Grades",
+		"[3] [color](fg:white,bg:green) output",
+		"[4] output.go",
+		"[5] random_out.go",
+		"[6] dashboard.go",
+	}
+	l.TextStyle = ui.NewStyle(ui.ColorYellow)
+	l.WrapText = false
+
+
 	courseGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
 	courseGrid.SetRect(0, 0, termWidth, termHeight)
   courseGrid.Set(
-		ui.NewRow(1.0/2,
-			ui.NewCol(1.0/4, pc),
-			ui.NewCol(3.0/4, p0),
-		),
-		ui.NewRow(1.0/2,
-			ui.NewCol(1.0, p0),
+		ui.NewRow(1.0, 
+			ui.NewCol(1.0/6, l), // left column for pages
+			ui.NewCol(5.0/6, // column for everything else
+        ui.NewRow(1.0/4, //maybe some stats here?
+          ui.NewCol(1.0/2, pc), // bar chart
+          ui.NewCol(1.0/2, pc), // bar chart
+        ),
+        ui.NewRow(1.0/3, p0), // paragraph
+      ),
 		),
   )
   return courseGrid
@@ -98,20 +118,25 @@ func createDashboardGrid(someVal string) *ui.Grid {
 }
 
 
-func  handleChoice(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid) {
+// called to handle when a user clicks a different tab
+func  handleChoice(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
   switch tabpane.ActiveTabIndex {
   case 0:
-    // updateMasterGrid(masterGrid, tabpane, "dashboard")
-    // ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex])
+    contentGrid = createDashboardGrid("Dashboard YO!!!!!!")
+    masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
+    ui.Render(masterGrid)
   case 1:
-    ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex-1])
-    // updateMasterGrid(masterGrid, tabpane, "course")
+    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
+    masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
+    ui.Render(masterGrid)
   case 2:
-    ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex-1])
-    // updateMasterGrid(masterGrid, tabpane, "course")
+    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
+    masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
+    ui.Render(masterGrid)
   case 3:
-    ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex-1])
-    // updateMasterGrid(masterGrid, tabpane, "course")
+    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
+    masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
+    ui.Render(masterGrid)
   }
 }
 
@@ -119,7 +144,7 @@ func  handleChoice(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *
 
 
 // called if master grid needs to be updated
-func updateMasterGrid(masterGrid *ui.Grid, tabpane *widgets.TabPane, contentGrid *ui.Grid) {
+func updateMasterGrid(masterGrid *ui.Grid, tabpane *widgets.TabPane, contentGrid *ui.Grid) *ui.Grid {
   ui.Clear()
   // defining master grid layout
   masterGrid.Set(
@@ -130,7 +155,8 @@ func updateMasterGrid(masterGrid *ui.Grid, tabpane *widgets.TabPane, contentGrid
       ui.NewCol(1.0/1, contentGrid),
     ),
   )
-  ui.Render(masterGrid)
+  // ui.Render(masterGrid)
+  return masterGrid
 }
 
 func main() {
@@ -154,27 +180,10 @@ func main() {
   // declare tab widget
   tabpane := createMainTabPane(courses)
 
-  contentGrid := createDashboardGrid("suh dude")
+  contentGrid := renderCourseGrid("front page")
 
   // Do the initial drawing of the main dash
-  updateMasterGrid(masterGrid, tabpane, contentGrid)
-
-  // handleChoice(coursePages) := func() {
-    // switch tabpane.ActiveTabIndex {
-    // case 0:
-      // // updateMasterGrid(masterGrid, tabpane, "dashboard")
-      // ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex])
-    // case 1:
-      // ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex])
-      // // updateMasterGrid(masterGrid, tabpane, "course")
-    // case 2:
-      // ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex])
-      // // updateMasterGrid(masterGrid, tabpane, "course")
-    // }
-  // }
-
-  // ui.Render(masterGrid)
-
+  masterGrid = updateMasterGrid(masterGrid, tabpane, contentGrid)
 
   var coursePages []ui.Grid
   for _, crs := range *courses {
@@ -201,11 +210,10 @@ func main() {
         tabpane.FocusRight()
         ui.Render(tabpane)
       case "<Enter>":
-        ui.Clear() // Clear what we currently are displaying
-        contentGrid = renderCourseGrid("u clicked m8")
-        // updateMasterGrid(masterGrid, tabpane, testGrid) // TODO Master grid doesn't clear previous grid?
-        // ui.Render(masterGrid, &coursePages[1])
-        handleChoice(coursePages, tabpane, masterGrid)
+        // contentGrid = renderCourseGrid("u clicked m8")
+        // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
+        // ui.Render(masterGrid)
+        handleChoice(coursePages, tabpane, masterGrid, contentGrid)
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				masterGrid.SetRect(0, 0, payload.Width, payload.Height)
