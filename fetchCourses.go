@@ -12,34 +12,71 @@ import (
 )
 
 type Course struct {
-	ID                               int           `json:"id"`
-	Name                             string        `json:"name"`
-	AccountID                        int           `json:"account_id"`
-	UUID                             string        `json:"uuid"`
-	StartAt                          time.Time     `json:"start_at"`
-	GradingStandardID                interface{}   `json:"grading_standard_id"`
-	IsPublic                         bool          `json:"is_public"`
-	CreatedAt                        time.Time     `json:"created_at"`
-	CourseCode                       string        `json:"course_code"`
-	DefaultView                      string        `json:"default_view"`
-	RootAccountID                    int           `json:"root_account_id"`
-	EnrollmentTermID                 int           `json:"enrollment_term_id"`
-	License                          string        `json:"license"`
-	GradePassbackSetting             interface{}   `json:"grade_passback_setting"`
-  EndAt                            time.Time     `json:"end_at"`
-	PublicSyllabus                   bool          `json:"public_syllabus"`
-	PublicSyllabusToAuth             bool          `json:"public_syllabus_to_auth"`
-	StorageQuotaMb                   int           `json:"storage_quota_mb"`
-	IsPublicToAuthUsers              bool          `json:"is_public_to_auth_users"`
-	ApplyAssignmentGroupWeights      bool          `json:"apply_assignment_group_weights"`
-	Calendar                         Calendar      `json:"calendar"`
-	TimeZone                         string        `json:"time_zone"`
-	Blueprint                        bool          `json:"blueprint"`
-	Enrollments                      []Enrollments `json:"enrollments"`
-	HideFinalGrades                  bool          `json:"hide_final_grades"`
-	WorkflowState                    string        `json:"workflow_state"`
-	RestrictEnrollmentsToCourseDates bool          `json:"restrict_enrollments_to_course_dates"`
-	OverriddenCourseVisibility       string        `json:"overridden_course_visibility,omitempty"`
+	ID                               int            `json:"id"`
+	Name                             string         `json:"name"`
+	AccountID                        int            `json:"account_id"`
+	UUID                             string         `json:"uuid"`
+	StartAt                          time.Time      `json:"start_at"`
+	GradingStandardID                interface{}    `json:"grading_standard_id"`
+	IsPublic                         bool           `json:"is_public"`
+	CreatedAt                        time.Time      `json:"created_at"`
+	CourseCode                       string         `json:"course_code"`
+	DefaultView                      string         `json:"default_view"`
+	RootAccountID                    int            `json:"root_account_id"`
+	EnrollmentTermID                 int            `json:"enrollment_term_id"`
+	License                          string         `json:"license"`
+	PublicDescription                string         `json:"public_description"`
+	GradePassbackSetting             interface{}    `json:"grade_passback_setting"`
+	EndAt                            time.Time      `json:"end_at"`
+	PublicSyllabus                   bool           `json:"public_syllabus"`
+	PublicSyllabusToAuth             bool           `json:"public_syllabus_to_auth"`
+	StorageQuotaMb                   int            `json:"storage_quota_mb"`
+	IsPublicToAuthUsers              bool           `json:"is_public_to_auth_users"`
+	CourseProgress                   CourseProgress `json:"course_progress"`
+	ApplyAssignmentGroupWeights      bool           `json:"apply_assignment_group_weights"`
+	Sections                         []Sections     `json:"sections"`
+	TotalStudents                    int            `json:"total_students"`
+	IsFavorite                       bool           `json:"is_favorite"`
+	Teachers                         []Teachers     `json:"teachers"`
+	Tabs                             []Tabs         `json:"tabs"`
+	Calendar                         Calendar       `json:"calendar"`
+	TimeZone                         string         `json:"time_zone"`
+	ImageDownloadURL                 string         `json:"image_download_url"`
+	Concluded                        bool           `json:"concluded"`
+	Blueprint                        bool           `json:"blueprint"`
+	Enrollments                      []Enrollments  `json:"enrollments"`
+	HideFinalGrades                  bool           `json:"hide_final_grades"`
+	WorkflowState                    string         `json:"workflow_state"`
+	RestrictEnrollmentsToCourseDates bool           `json:"restrict_enrollments_to_course_dates"`
+}
+type CourseProgress struct {
+	RequirementCount          int         `json:"requirement_count"`
+	RequirementCompletedCount int         `json:"requirement_completed_count"`
+	NextRequirementURL        interface{} `json:"next_requirement_url"`
+	CompletedAt               interface{} `json:"completed_at"`
+}
+type Sections struct {
+	ID             int         `json:"id"`
+	Name           string      `json:"name"`
+	StartAt        interface{} `json:"start_at"`
+	EndAt          interface{} `json:"end_at"`
+	EnrollmentRole string      `json:"enrollment_role"`
+}
+type Teachers struct {
+	ID             int         `json:"id"`
+	DisplayName    string      `json:"display_name"`
+	AvatarImageURL string      `json:"avatar_image_url"`
+	HTMLURL        string      `json:"html_url"`
+	Pronouns       interface{} `json:"pronouns"`
+}
+type Tabs struct {
+	ID         string `json:"id"`
+	HTMLURL    string `json:"html_url"`
+	FullURL    string `json:"full_url"`
+	Position   int    `json:"position"`
+	Visibility string `json:"visibility"`
+	Label      string `json:"label"`
+	Type       string `json:"type"`
 }
 type Calendar struct {
 	Ics string `json:"ics"`
@@ -53,11 +90,11 @@ type Enrollments struct {
 	LimitPrivilegesToCourseSection bool   `json:"limit_privileges_to_course_section"`
 }
 
-
 func fetchCourses() *[]Course {
 
   // Create URL string from config file
-  url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60&enrollment_state=active"
+  // url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60&enrollment_state=active"
+  url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60&enrollment_state=active&incude[]=syllabus_body&include[]=public_description&include[]=course_progress&include[]=sections&include[]=total_students&include[]=favorites&include[]=teachers&include[]=tabs&include[]=course_image&include[]=concluded"
   // url := viper.Get("canvasdomain").(string) + "api/v1/courses/"
 
   // Create a Bearer string by appending string access token
