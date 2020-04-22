@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"math"
+	// "math"
   "fmt"
   "time"
   "github.com/spf13/viper"
@@ -35,88 +35,6 @@ func createMainTabPane(courses *[]Course) *widgets.TabPane {
 	tabpane.Border = true
   return tabpane
 }
-
-// based on an input course object, this function generates 
-// a grid with widgets populated with data from the course
-func renderCourseGrid(someVal string) *ui.Grid {
-  // dummy placeholder widget
-  p0 := widgets.NewParagraph()
-  p0.Title = "Syllabus"
-	p0.Text = someVal
-	p0.Border = true
-
-  // pie chart to eventually break down course points
-  pc := widgets.NewPieChart()
-	pc.Title = "Course Breakdown"
-	pc.Data = []float64{.10, .10, .05, .20, .05, .13, .14, .25}
-	pc.AngleOffset = -.5 * math.Pi
-	pc.LabelFormatter = func(i int, v float64) string {
-		return fmt.Sprintf("%.02f", v)
-	}
-
-  // list to select view of course
-	l := widgets.NewList()
-	l.Title = "Pages"
-  l.Rows = []string{
-		"[0] Assignmets",
-		"[1] Quizzes",
-		"[2] Grades",
-		"[3] [color](fg:white,bg:green) output",
-		"[4] output.go",
-		"[5] random_out.go",
-		"[6] dashboard.go",
-	}
-	l.TextStyle = ui.NewStyle(ui.ColorYellow)
-	l.WrapText = false
-
-
-	courseGrid := ui.NewGrid()
-	termWidth, termHeight := ui.TerminalDimensions()
-	courseGrid.SetRect(0, 0, termWidth, termHeight)
-  courseGrid.Set(
-		ui.NewRow(1.0, 
-			ui.NewCol(1.0/6, l), // left column for pages
-			ui.NewCol(5.0/6, // column for everything else
-        ui.NewRow(1.0/4, //maybe some stats here?
-          ui.NewCol(1.0/2, pc), // bar chart
-          ui.NewCol(1.0/2, pc), // bar chart
-        ),
-        ui.NewRow(1.0/3, p0), // paragraph
-      ),
-		),
-  )
-  return courseGrid
-}
-
-func createDashboardGrid(someVal string) *ui.Grid {
-  // dummy placeholder widget
-  p0 := widgets.NewParagraph()
-	p0.Text = someVal
-	p0.Border = true
-
-  bc := widgets.NewBarChart()
-	bc.Data = []float64{3, 2, 5, 3, 9, 3}
-	bc.Labels = []string{"S0", "S1", "S2", "S3", "S4", "S5"}
-	bc.Title = "Bar Chart"
-	bc.BarWidth = 5
-	bc.BarColors = []ui.Color{ui.ColorRed, ui.ColorGreen}
-	bc.LabelStyles = []ui.Style{ui.NewStyle(ui.ColorBlue)}
-	bc.NumStyles = []ui.Style{ui.NewStyle(ui.ColorYellow)}
-  
-	dashboardGrid := ui.NewGrid()
-	termWidth, termHeight := ui.TerminalDimensions()
-	dashboardGrid.SetRect(0, 0, termWidth, termHeight)
-  dashboardGrid.Set(
-		ui.NewRow(1.0/2,
-			ui.NewCol(1.0/4, bc),
-		),
-		ui.NewRow(1.0/2,
-			ui.NewCol(1.0, p0),
-		),
-  )
-  return dashboardGrid
-}
-
 
 // called to handle when a user clicks a different tab
 func  handleChoice(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
@@ -184,7 +102,7 @@ func main() {
   // declare tab widget
   tabpane := createMainTabPane(courses)
 
-  contentGrid := renderCourseGrid("front page")
+  contentGrid := createCourseGrid("front page")
 
   // Do the initial drawing of the main dash
   masterGrid = updateMasterGrid(masterGrid, tabpane, contentGrid)
@@ -192,7 +110,7 @@ func main() {
   var coursePages []ui.Grid
   for _, crs := range *courses {
     if crs.EndAt.IsZero() {
-      coursePages = append(coursePages, *renderCourseGrid(crs.Name))
+      coursePages = append(coursePages, *createCourseGrid(crs.Name))
     }
   }
 
