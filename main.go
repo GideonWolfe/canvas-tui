@@ -213,6 +213,16 @@ func main() {
       case "l":
         tabpane.FocusRight()
         ui.Render(tabpane)
+      case "j":
+        // variable that points to the list we're on
+        l := contentGrid.Items[0].Entry.(*widgets.List)
+        l.ScrollDown()
+				ui.Render(masterGrid)
+      case "k":
+        // variable that points to the list we're on
+        l := contentGrid.Items[0].Entry.(*widgets.List)
+        l.ScrollUp()
+				ui.Render(masterGrid)
       case "<Enter>":
         handleChoice(coursePages, tabpane, masterGrid, contentGrid)
       case "<Resize>":
