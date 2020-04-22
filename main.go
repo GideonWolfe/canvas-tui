@@ -98,6 +98,26 @@ func createDashboardGrid(someVal string) *ui.Grid {
 }
 
 
+func  handleChoice(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid) {
+  switch tabpane.ActiveTabIndex {
+  case 0:
+    // updateMasterGrid(masterGrid, tabpane, "dashboard")
+    // ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex])
+  case 1:
+    ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex-1])
+    // updateMasterGrid(masterGrid, tabpane, "course")
+  case 2:
+    ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex-1])
+    // updateMasterGrid(masterGrid, tabpane, "course")
+  case 3:
+    ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex-1])
+    // updateMasterGrid(masterGrid, tabpane, "course")
+  }
+}
+
+
+
+
 // called if master grid needs to be updated
 func updateMasterGrid(masterGrid *ui.Grid, tabpane *widgets.TabPane, contentGrid *ui.Grid) {
   ui.Clear()
@@ -139,14 +159,17 @@ func main() {
   // Do the initial drawing of the main dash
   updateMasterGrid(masterGrid, tabpane, contentGrid)
 
-  // handleChoice() := func() {
+  // handleChoice(coursePages) := func() {
     // switch tabpane.ActiveTabIndex {
     // case 0:
-      // updateMasterGrid(masterGrid, tabpane, "dashboard")
+      // // updateMasterGrid(masterGrid, tabpane, "dashboard")
+      // ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex])
     // case 1:
-      // updateMasterGrid(masterGrid, tabpane, "course")
+      // ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex])
+      // // updateMasterGrid(masterGrid, tabpane, "course")
     // case 2:
-      // updateMasterGrid(masterGrid, tabpane, "course")
+      // ui.Render(masterGrid, &coursePages[tabpane.ActiveTabIndex])
+      // // updateMasterGrid(masterGrid, tabpane, "course")
     // }
   // }
 
@@ -182,7 +205,7 @@ func main() {
         contentGrid = renderCourseGrid("u clicked m8")
         // updateMasterGrid(masterGrid, tabpane, testGrid) // TODO Master grid doesn't clear previous grid?
         // ui.Render(masterGrid, &coursePages[1])
-        // handleChoice()
+        handleChoice(coursePages, tabpane, masterGrid)
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				masterGrid.SetRect(0, 0, payload.Width, payload.Height)
