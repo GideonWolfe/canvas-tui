@@ -123,19 +123,23 @@ func  handleChoice(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *
   switch tabpane.ActiveTabIndex {
   case 0:
     contentGrid = createDashboardGrid("Dashboard YO!!!!!!")
-    masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
+    masterGrid.Items[1].Entry = contentGrid
+    // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
     ui.Render(masterGrid)
   case 1:
     contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
-    masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
+    masterGrid.Items[1].Entry = contentGrid
+    // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
     ui.Render(masterGrid)
   case 2:
     contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
-    masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
+    masterGrid.Items[1].Entry = contentGrid
+    // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
     ui.Render(masterGrid)
   case 3:
     contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
-    masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
+    masterGrid.Items[1].Entry = contentGrid
+    // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
     ui.Render(masterGrid)
   }
 }
@@ -210,9 +214,6 @@ func main() {
         tabpane.FocusRight()
         ui.Render(tabpane)
       case "<Enter>":
-        // contentGrid = renderCourseGrid("u clicked m8")
-        // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
-        // ui.Render(masterGrid)
         handleChoice(coursePages, tabpane, masterGrid, contentGrid)
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
