@@ -22,6 +22,28 @@ func readConfig() {
   }
 }
 
+
+func renderGrid() *ui.Grid {
+  // Dummy placeholder widget
+  p0 := widgets.NewParagraph()
+	p0.Text = "Some Text"
+	p0.Border = true
+
+	newGrid := ui.NewGrid()
+	termWidth, termHeight := ui.TerminalDimensions()
+	newGrid.SetRect(0, 0, termWidth, termHeight)
+  newGrid.Set(
+		ui.NewRow(1.0/2,
+			ui.NewCol(1.0, p0),
+		),
+		ui.NewRow(1.0/2,
+			ui.NewCol(1.0, p0),
+		),
+  )
+
+  return newGrid
+}
+
 func main() {
   
   // Initialize temui
@@ -63,13 +85,13 @@ func main() {
   tabpane := widgets.NewTabPane(titles...)
 	tabpane.Border = true
 
-  // defining grid layout
+  // defining master grid layout
   grid.Set(
 		ui.NewRow(1.0/20,
 			ui.NewCol(1.0, tabpane),
 		),
-		ui.NewRow(1.0/3,
-			ui.NewCol(1.0/2, p0),
+		ui.NewRow(19.0/20,
+			ui.NewCol(1.0/1, renderGrid()),
 		),
   )
   
@@ -107,6 +129,8 @@ func main() {
         ui.Clear()
         ui.Render(tabpane)
         renderTab()
+      case "<Enter>":
+        return
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				grid.SetRect(0, 0, payload.Width, payload.Height)
@@ -114,9 +138,6 @@ func main() {
 				ui.Render(grid)
       }
 		case <-ticker:
-			if tickerCount == 100 {
-				return
-			}
       ui.Render(grid)
 			tickerCount++
 		}
