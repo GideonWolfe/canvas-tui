@@ -5,7 +5,6 @@ import (
 	"math"
   "fmt"
   "time"
-  // "os"
   "github.com/spf13/viper"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -100,37 +99,17 @@ func createDashboardGrid(someVal string) *ui.Grid {
 
 
 // called if master grid needs to be updated
-func updateMasterGrid(masterGrid *ui.Grid, tabpane *widgets.TabPane, content string) {
+func updateMasterGrid(masterGrid *ui.Grid, tabpane *widgets.TabPane, contentGrid *ui.Grid) {
   ui.Clear()
   // defining master grid layout
-  if content == "course" {
-    masterGrid.Set(
-      ui.NewRow(1.0/20,
-        ui.NewCol(1.0, tabpane),
-      ),
-      ui.NewRow(19.0/20,
-        ui.NewCol(1.0/1, renderCourseGrid("THIS IS A COURSE PAGE")),
-      ),
-    )
-  } else if content == "dashboard" {
-    masterGrid.Set(
-      ui.NewRow(1.0/20,
-        ui.NewCol(1.0, tabpane),
-      ),
-      ui.NewRow(19.0/20,
-        ui.NewCol(1.0/1, createDashboardGrid("THIS IS A DASHBOARD PAGE")),
-      ),
-    )
-  } else {
-    masterGrid.Set(
-      ui.NewRow(1.0/20,
-        ui.NewCol(1.0, tabpane),
-      ),
-      ui.NewRow(19.0/20,
-        ui.NewCol(1.0/1, renderCourseGrid("UNKNOWN CONTENT TYPE")),
-      ),
-    )
-  }
+  masterGrid.Set(
+    ui.NewRow(1.0/20,
+      ui.NewCol(1.0, tabpane),
+    ),
+    ui.NewRow(19.0/20,
+      ui.NewCol(1.0/1, contentGrid),
+    ),
+  )
   ui.Render(masterGrid)
 }
 
@@ -155,10 +134,12 @@ func main() {
   // declare tab widget
   tabpane := createMainTabPane(courses)
 
-  // Do the initial drawing of the main dash
-  updateMasterGrid(masterGrid, tabpane, "dashboard")
+  contentGrid := createDashboardGrid("suh dude")
 
-  // renderTab := func() {
+  // Do the initial drawing of the main dash
+  updateMasterGrid(masterGrid, tabpane, contentGrid)
+
+  // handleChoice() := func() {
     // switch tabpane.ActiveTabIndex {
     // case 0:
       // updateMasterGrid(masterGrid, tabpane, "dashboard")
@@ -170,6 +151,15 @@ func main() {
   // }
 
   // ui.Render(masterGrid)
+
+
+  var coursePages []ui.Grid
+  for _, crs := range *courses {
+    if crs.EndAt.IsZero() {
+      coursePages = append(coursePages, *renderCourseGrid(crs.Name))
+    }
+  }
+
 
   // Event polling loop
   tickerCount := 1
@@ -189,7 +179,10 @@ func main() {
         ui.Render(tabpane)
       case "<Enter>":
         ui.Clear() // Clear what we currently are displaying
-        updateMasterGrid(masterGrid, tabpane, "course") // TODO Master grid doesn't clear previous grid?
+        contentGrid = renderCourseGrid("u clicked m8")
+        // updateMasterGrid(masterGrid, tabpane, testGrid) // TODO Master grid doesn't clear previous grid?
+        // ui.Render(masterGrid, &coursePages[1])
+        // handleChoice()
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				masterGrid.SetRect(0, 0, payload.Width, payload.Height)
