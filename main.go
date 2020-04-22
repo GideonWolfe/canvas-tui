@@ -2,9 +2,10 @@ package main
 
 import (
 	"log"
+	"math"
   "fmt"
   "time"
-  "os"
+  // "os"
   "github.com/spf13/viper"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -22,26 +23,115 @@ func readConfig() {
   }
 }
 
+// called to generate navigation tabs for courses
+func createMainTabPane(courses *[]Course) *widgets.TabPane {
+  var titles []string
+  titles = append(titles, "Dashboard")
+  for _, crs := range *courses {
+    if crs.EndAt.IsZero() {
+      titles = append(titles, crs.CourseCode)
+    }
+  }
+  tabpane := widgets.NewTabPane(titles...)
+	tabpane.Border = true
+  return tabpane
+}
 
-func renderGrid() *ui.Grid {
-  // Dummy placeholder widget
+// based on an input course object, this function generates 
+// a grid with widgets populated with data from the course
+func renderCourseGrid(someVal string) *ui.Grid {
+  // dummy placeholder widget
   p0 := widgets.NewParagraph()
-	p0.Text = "Some Text"
+	p0.Text = someVal
 	p0.Border = true
 
-	newGrid := ui.NewGrid()
+  // pie chart to eventually break down course points
+  pc := widgets.NewPieChart()
+	pc.Title = "Pie Chart"
+	pc.Data = []float64{.10, .10, .05, .20, .05, .13, .14, .25}
+	pc.AngleOffset = -.5 * math.Pi
+	pc.LabelFormatter = func(i int, v float64) string {
+		return fmt.Sprintf("%.02f", v)
+	}
+
+	courseGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
-	newGrid.SetRect(0, 0, termWidth, termHeight)
-  newGrid.Set(
+	courseGrid.SetRect(0, 0, termWidth, termHeight)
+  courseGrid.Set(
 		ui.NewRow(1.0/2,
-			ui.NewCol(1.0, p0),
+			ui.NewCol(1.0/4, pc),
+			ui.NewCol(3.0/4, p0),
 		),
 		ui.NewRow(1.0/2,
 			ui.NewCol(1.0, p0),
 		),
   )
+  return courseGrid
+}
 
-  return newGrid
+func createDashboardGrid(someVal string) *ui.Grid {
+  // dummy placeholder widget
+  p0 := widgets.NewParagraph()
+	p0.Text = someVal
+	p0.Border = true
+
+  bc := widgets.NewBarChart()
+	bc.Data = []float64{3, 2, 5, 3, 9, 3}
+	bc.Labels = []string{"S0", "S1", "S2", "S3", "S4", "S5"}
+	bc.Title = "Bar Chart"
+	bc.BarWidth = 5
+	bc.BarColors = []ui.Color{ui.ColorRed, ui.ColorGreen}
+	bc.LabelStyles = []ui.Style{ui.NewStyle(ui.ColorBlue)}
+	bc.NumStyles = []ui.Style{ui.NewStyle(ui.ColorYellow)}
+  
+	dashboardGrid := ui.NewGrid()
+	termWidth, termHeight := ui.TerminalDimensions()
+	dashboardGrid.SetRect(0, 0, termWidth, termHeight)
+  dashboardGrid.Set(
+		ui.NewRow(1.0/2,
+			ui.NewCol(1.0/4, bc),
+		),
+		ui.NewRow(1.0/2,
+			ui.NewCol(1.0, p0),
+		),
+  )
+  return dashboardGrid
+}
+
+
+// called if master grid needs to be updated
+func updateMasterGrid(masterGrid *ui.Grid, tabpane *widgets.TabPane, content string) {
+  ui.Clear()
+  // defining master grid layout
+  if content == "course" {
+    masterGrid.Set(
+      ui.NewRow(1.0/20,
+        ui.NewCol(1.0, tabpane),
+      ),
+      ui.NewRow(19.0/20,
+        ui.NewCol(1.0/1, renderCourseGrid("THIS IS A COURSE PAGE")),
+      ),
+    )
+  } else if content == "dashboard" {
+    masterGrid.Set(
+      ui.NewRow(1.0/20,
+        ui.NewCol(1.0, tabpane),
+      ),
+      ui.NewRow(19.0/20,
+        ui.NewCol(1.0/1, createDashboardGrid("THIS IS A DASHBOARD PAGE")),
+      ),
+    )
+  } else {
+    masterGrid.Set(
+      ui.NewRow(1.0/20,
+        ui.NewCol(1.0, tabpane),
+      ),
+      ui.NewRow(19.0/20,
+        ui.NewCol(1.0/1, renderCourseGrid("UNKNOWN CONTENT TYPE")),
+      ),
+    )
+  }
+  ui.Render(masterGrid)
 }
 
 func main() {
@@ -52,62 +142,34 @@ func main() {
 	}
 	defer ui.Close()
 
-
-  f, err := os.Open("config.yaml")
-  if err != nil {
-      panic(err)
-  }
-  defer f.Close()
-
+  // get the main config
   readConfig()
 
-  
-  // declare grid and set terminal dimensions
-	grid := ui.NewGrid()
-	termWidth, termHeight := ui.TerminalDimensions()
-	grid.SetRect(0, 0, termWidth, termHeight)
-
-  // Dummy placeholder widget
-  p0 := widgets.NewParagraph()
-	p0.Text = "Some Text"
-	p0.Border = true
-
-  // Titles for the tab widget
-  var titles []string
   var courses *[]Course = fetchCourses()
-  for _, crs := range *courses {
-    if crs.EndAt.IsZero() {
-      titles = append(titles, crs.CourseCode)
-    }
-  }
+  
+  // declare master grid and set terminal dimensions
+	masterGrid := ui.NewGrid()
+	termWidth, termHeight := ui.TerminalDimensions()
+	masterGrid.SetRect(0, 0, termWidth, termHeight)
 
   // declare tab widget
-  tabpane := widgets.NewTabPane(titles...)
-	tabpane.Border = true
+  tabpane := createMainTabPane(courses)
 
-  // defining master grid layout
-  grid.Set(
-		ui.NewRow(1.0/20,
-			ui.NewCol(1.0, tabpane),
-		),
-		ui.NewRow(19.0/20,
-			ui.NewCol(1.0/1, renderGrid()),
-		),
-  )
-  
+  // Do the initial drawing of the main dash
+  updateMasterGrid(masterGrid, tabpane, "dashboard")
 
-	renderTab := func() {
-		switch tabpane.ActiveTabIndex {
-		case 0:
-			ui.Render(p0)
-		case 1:
-			ui.Render(p0)
-		case 2:
-			ui.Render(p0)
-		}
-	}
+  // renderTab := func() {
+    // switch tabpane.ActiveTabIndex {
+    // case 0:
+      // updateMasterGrid(masterGrid, tabpane, "dashboard")
+    // case 1:
+      // updateMasterGrid(masterGrid, tabpane, "course")
+    // case 2:
+      // updateMasterGrid(masterGrid, tabpane, "course")
+    // }
+  // }
 
-	ui.Render(grid)
+  // ui.Render(masterGrid)
 
   // Event polling loop
   tickerCount := 1
@@ -120,25 +182,22 @@ func main() {
       case "q", "<C-c>":
         return
       case "h":
-        tabpane.FocusLeft()
-        ui.Clear()
-        ui.Render(tabpane)
-        renderTab()
+        tabpane.FocusLeft() // changes the currently selected tab
+        ui.Render(tabpane) // quickly redraws tabpane
       case "l":
         tabpane.FocusRight()
-        ui.Clear()
         ui.Render(tabpane)
-        renderTab()
       case "<Enter>":
-        return
+        ui.Clear() // Clear what we currently are displaying
+        updateMasterGrid(masterGrid, tabpane, "course") // TODO Master grid doesn't clear previous grid?
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
-				grid.SetRect(0, 0, payload.Width, payload.Height)
+				masterGrid.SetRect(0, 0, payload.Width, payload.Height)
 				ui.Clear()
-				ui.Render(grid)
+				ui.Render(masterGrid)
       }
 		case <-ticker:
-      ui.Render(grid)
+      ui.Render(masterGrid)
 			tickerCount++
 		}
 	}
