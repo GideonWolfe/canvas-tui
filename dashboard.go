@@ -17,11 +17,13 @@ import (
 
 
 
-func createDashboardGrid(someVal string) *ui.Grid {
+func createDashboardGrid(courses *[]Course) *ui.Grid {
   // dummy placeholder widget
   p0 := widgets.NewParagraph()
-	p0.Text = someVal
+	// p0.Text = someVal
 	p0.Border = true
+
+  cl := canvasLogo()
 
   bc := widgets.NewBarChart()
 	bc.Data = []float64{3, 2, 5, 3, 9, 3}
@@ -36,10 +38,11 @@ func createDashboardGrid(someVal string) *ui.Grid {
 	termWidth, termHeight := ui.TerminalDimensions()
 	dashboardGrid.SetRect(0, 0, termWidth, termHeight)
   dashboardGrid.Set(
-		ui.NewRow(1.0/2,
-			ui.NewCol(1.0/4, bc),
+		ui.NewRow(1.0/4,
+			ui.NewCol(1.0/3, cl),
+			ui.NewCol(2.0/3, bc),
 		),
-		ui.NewRow(1.0/2,
+		ui.NewRow(3.0/4,
 			ui.NewCol(1.0, p0),
 		),
   )
