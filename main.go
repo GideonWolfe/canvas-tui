@@ -102,7 +102,7 @@ func main() {
   // declare tab widget
   tabpane := createMainTabPane(courses)
 
-  contentGrid := createCourseGrid("front page")
+  contentGrid := createDashboardGrid("front page")
 
   // Do the initial drawing of the main dash
   masterGrid = updateMasterGrid(masterGrid, tabpane, contentGrid)
@@ -110,7 +110,7 @@ func main() {
   var coursePages []ui.Grid
   for _, crs := range *courses {
     if crs.EndAt.IsZero() {
-      coursePages = append(coursePages, *createCourseGrid(crs.Name))
+      coursePages = append(coursePages, *createCourseGrid(crs))
     }
   }
 
@@ -133,13 +133,13 @@ func main() {
         ui.Render(tabpane)
       case "j":
         // variable that points to the list we're on
-        l := contentGrid.Items[0].Entry.(*widgets.List)
-        l.ScrollDown()
+        // l := contentGrid.Items[0].Entry.(*widgets.List)
+        // l.ScrollDown()
 				ui.Render(masterGrid)
       case "k":
         // variable that points to the list we're on
-        l := contentGrid.Items[0].Entry.(*widgets.List)
-        l.ScrollUp()
+        // l := contentGrid.Items[0].Entry.(*widgets.List)
+        // l.ScrollUp()
 				ui.Render(masterGrid)
       case "<Enter>":
         handleChoice(coursePages, tabpane, masterGrid, contentGrid)

@@ -7,7 +7,9 @@ import (
 	// "net/http"
   // "github.com/spf13/viper"
   "fmt"
+  "strconv"
   "math"
+  // "reflect"
   // "time"
   // "bytes"
 	ui "github.com/gizak/termui/v3"
@@ -18,36 +20,80 @@ import (
 
 // based on an input course object, this function generates 
 // a grid with widgets populated with data from the course
-func createCourseGrid(someVal string) *ui.Grid {
+func createCourseGrid(course Course) *ui.Grid {
+
+  var assignments *[]Assignment = fetchAssignments(course.ID)
+
+  var overviewText string = "Professor: "+course.Teachers[0].DisplayName+"\n" +
+                            "Students: "+strconv.FormatInt(int64(course.TotalStudents), 10)+"\n" +
+                            "Role: "+course.Enrollments[0].Type+"\n" + 
+                            "Started At: "+course.StartAt.Format("Jan 2, 2006")+"\n" +
+                            "Calendar: "+course.Calendar.Ics+"\n"
   // dummy placeholder widget
   p0 := widgets.NewParagraph()
-  p0.Title = "Syllabus"
-	p0.Text = someVal
+  p0.Title = "Overview"
+  p0.Text = overviewText
 	p0.Border = true
+
+  var assignmentCount int64
+  var completedAssignmentCount int64
+  for _, assn := range *assignments {
+    assignmentCount++
+    if !assn.Submission.SubmittedAt.IsZero(){
+      completedAssignmentCount++
+    }
+  }
+
+  g1 := widgets.NewGauge()
+  g1.Title = "Assignments: "+strconv.FormatInt(completedAssignmentCount, 10)+"/"+strconv.FormatInt(assignmentCount, 10)
+  if completedAssignmentCount != 0 {
+    currentPercent := int(((float64(completedAssignmentCount)/float64(assignmentCount))*100))
+    g1.Percent = currentPercent
+    if currentPercent > 80 {
+      g1.BarColor = ui.ColorGreen
+    } else if currentPercent > 70 {
+      g1.BarColor = ui.ColorYellow
+    } else if currentPercent > 60 {
+      g1.BarColor = ui.ColorRed
+    }
+  } else {
+    g1.Percent = 0
+  }
+	g1.LabelStyle = ui.NewStyle(ui.ColorYellow)
+	g1.TitleStyle.Fg = ui.ColorMagenta
+	g1.BorderStyle.Fg = ui.ColorWhite
+
+
+  var assignmentGroups *[]AssignmentGroup = fetchAssignmentGroups(course.ID)
 
   // pie chart to eventually break down course points
   pc := widgets.NewPieChart()
 	pc.Title = "Course Breakdown"
-	pc.Data = []float64{.10, .10, .05, .20, .05, .13, .14, .25}
+  pc.Data = []float64{.1, .2}
+  // pc.Data = []float64{.10, .10, .05, .20, .05, .13, .14, .25}
 	pc.AngleOffset = -.5 * math.Pi
-	pc.LabelFormatter = func(i int, v float64) string {
-		return fmt.Sprintf("%.02f", v)
-	}
+  pc.LabelFormatter = func(i int, v float64) string {
+    return fmt.Sprintf("%.02f", v)
+  }
+
 
   // list to select view of course
 	l := widgets.NewList()
 	l.Title = "Pages"
-  l.Rows = []string{
-		"[0] Assignmets",
-		"[1] Quizzes",
-		"[2] Grades",
-		"[3] [color](fg:white,bg:green) output",
-		"[4] output.go",
-		"[5] random_out.go",
-		"[6] dashboard.go",
-	}
+  l.Rows = []string{}
 	l.TextStyle = ui.NewStyle(ui.ColorYellow)
 	l.WrapText = false
+
+  for _, tab := range course.Tabs {
+    l.Rows = append(l.Rows, tab.Label)
+  }
+
+  for _, ag := range *assignmentGroups {
+    // f := strconv.FormatFloat(ag.GroupWeight, 'E', -1, 64)
+    // p0.Text = ag.GroupWeight
+    // p0.Text = p0.Text+f+"\n"
+    pc.Data = append(pc.Data, ag.GroupWeight)
+  }
 
 
 	courseGrid := ui.NewGrid()
@@ -58,10 +104,10 @@ func createCourseGrid(someVal string) *ui.Grid {
 			ui.NewCol(1.0/6, l), // left column for pages
 			ui.NewCol(5.0/6, // column for everything else
         ui.NewRow(1.0/4, //maybe some stats here?
-          ui.NewCol(1.0/2, pc), // bar chart
-          ui.NewCol(1.0/2, pc), // bar chart
+          ui.NewCol(1.0/2, p0), // bar chart
+          ui.NewCol(1.0/2, g1), // bar chart
         ),
-        ui.NewRow(1.0/3, p0), // paragraph
+        ui.NewRow(1.0/3, pc), // paragraph
       ),
 		),
   )
