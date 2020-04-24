@@ -9,7 +9,6 @@ import (
   // "log"
 	"math"
 	"strconv"
-
   // "time"
 	// "reflect"
 	// "time"
@@ -135,6 +134,10 @@ func createGradeSummaryTable(assignments *[]Assignment) *widgets.Table {
       }
     }
   }
+  // reverse the list
+  for i, j := 0, len(tableData)-1; i < j; i, j = i+1, j-1 {
+    tableData[i], tableData[j] = tableData[j], tableData[i]
+  }
 
   gradeTable := widgets.NewTable()
   gradeTable.Title = "Recent Scores:"
@@ -190,6 +193,9 @@ func createCoursePieChart(assignmentGroups *[]AssignmentGroup) *widgets.PieChart
   for _, ag := range *assignmentGroups {
     weights = append(weights, ag.GroupWeight)
     names = append(names, ag.Name)
+  }
+  if len(weights) == 0{
+    weights = append(weights, 100)
   }
   pc.Data = weights
   pc.LabelFormatter = func(i int, v float64) string {
