@@ -19,9 +19,7 @@ import (
 )
 
 func createAnnouncementWindow(course Course) *widgets.Paragraph {
-
   announcements := fetchAnnouncements(course.ID)
- 
   p4 := widgets.NewParagraph()
 	p4.Title = "Latest Announcement"
 	p4.BorderStyle.Fg = ui.ColorBlue
@@ -34,12 +32,20 @@ func createAnnouncementWindow(course Course) *widgets.Paragraph {
     }
     i++
   }
-
   p4.Text = "[Title](fg:blue,mod:bold): "+recentAnnouncement.Title+"\n"+
             "[Date](fg:blue,mod:bold): "+recentAnnouncement.PostedAt.Local().Format("Jan 2, 2006")+"\n\n"+
             strip.StripTags(recentAnnouncement.Message)+"\n"
   return p4
 }
+
+func createSyllabusWindow(course Course) *widgets.Paragraph {
+  p4 := widgets.NewParagraph()
+	p4.Title = "Syllabus"
+	p4.BorderStyle.Fg = ui.ColorYellow
+  p4.Text = strip.StripTags(course.SyllabusBody)
+  return p4
+}
+
 
 func createScorePlot(course Course, assignments *[]Assignment) *widgets.Plot {
   
@@ -234,6 +240,8 @@ func createCourseGrid(course Course) *ui.Grid {
 
   announcements := createAnnouncementWindow(course)
 
+  syllabus := createSyllabusWindow(course)
+
 
   // list to select view of course
 	l := widgets.NewList()
@@ -252,6 +260,8 @@ func createCourseGrid(course Course) *ui.Grid {
 	courseGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
 	courseGrid.SetRect(0, 0, termWidth, termHeight)
+  
+
   courseGrid.Set(
 		ui.NewRow(1.0, 
 			ui.NewCol(1.0/6, l), // left column for pages
@@ -260,12 +270,13 @@ func createCourseGrid(course Course) *ui.Grid {
           ui.NewCol(1.0, assignmentProgressBar), // assignment completion progress
         ),
         ui.NewRow(1.0/4, //maybe some stats here?
-          ui.NewCol(1.0/2, p0), // course overview
-          ui.NewCol(1.0/2, announcements), // assignment completion progress
+          ui.NewCol(1.0/7, p0), // course overview
+          ui.NewCol(3.0/7, todoTable), // assignment completion progress
+          ui.NewCol(3.0/7, gradeTable), // assignment completion progress
         ),
         ui.NewRow(1.0/3,  // 
-          ui.NewCol(2.0/4, todoTable),
-          ui.NewCol(2.0/4, gradeTable),
+          ui.NewCol(2.0/4, announcements),
+          ui.NewCol(2.0/4, syllabus),
         ),
         ui.NewRow(1.0/3,  // 
           ui.NewCol(1.0/2, sp),
@@ -274,6 +285,9 @@ func createCourseGrid(course Course) *ui.Grid {
       ),
 		),
   )
+
+
+
   return courseGrid
 }
 

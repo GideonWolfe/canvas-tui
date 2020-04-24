@@ -27,7 +27,7 @@ func createTodoTableDash(courses *[]Course) *widgets.Table {
           var assignmentData []string
           assignmentData = append(assignmentData, assn.Name)
           assignmentData = append(assignmentData, crs.CourseCode)
-          assignmentData = append(assignmentData, assn.DueAt.Local().Format("1/2 3:04"))
+          assignmentData = append(assignmentData, assn.DueAt.Local().Format("1/2 3:04 PM"))
           assignmentData = append(assignmentData, fmt.Sprint(assn.PointsPossible))
           tableData = append(tableData, assignmentData)
         }

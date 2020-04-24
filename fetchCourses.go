@@ -20,6 +20,7 @@ type Course struct {
 	GradingStandardID                interface{}    `json:"grading_standard_id"`
 	IsPublic                         bool           `json:"is_public"`
 	CreatedAt                        time.Time      `json:"created_at"`
+	SyllabusBody                     string         `json:"syllabus_body"`
 	CourseCode                       string         `json:"course_code"`
 	DefaultView                      string         `json:"default_view"`
 	RootAccountID                    int            `json:"root_account_id"`
@@ -98,7 +99,7 @@ func fetchCourses() *[]Course {
 
   // Create URL string from config file
   url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60&enrollment_state=active"+
-                                                                          "&incude[]=syllabus_body"+
+                                                                          "&include[]=syllabus_body"+
                                                                           "&include[]=total_scores"+
                                                                           "&include[]=public_description"+
                                                                           "&include[]=course_progress"+
