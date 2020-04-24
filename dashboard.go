@@ -14,7 +14,40 @@ import (
 	"github.com/gizak/termui/v3/widgets"
 )
 
+func createSummaryBarchart(courses *[]Course) *widgets.BarChart {
+var courseNames []string
+  var courseScores []float64
+  var barColors []ui.Color
+  for _, crs := range *courses {
+    if crs.EndAt.IsZero() {
+      currentScore := crs.Enrollments[0].ComputedCurrentScore
+      courseNames = append(courseNames, crs.CourseCode)
+      courseScores = append(courseScores, currentScore)
+      if currentScore > 80 {
+        barColors = append(barColors, ui.ColorGreen)
+      } else if currentScore > 70 {
+        barColors = append(barColors, ui.ColorYellow)
+      } else if currentScore > 60 {
+        barColors = append(barColors, ui.ColorMagenta)
+      } else if currentScore > 50 {
+        barColors = append(barColors, ui.ColorRed)
+      }
+    }
+  }
 
+  bc := widgets.NewBarChart()
+  bc.Data = courseScores
+  bc.Labels = courseNames
+	bc.Title = "Current Course Scores"
+	bc.BarWidth = 15
+  bc.BarColors = barColors
+	bc.LabelStyles = []ui.Style{ui.NewStyle(ui.ColorBlue)}
+	// bc.NumStyles = []ui.Style{ui.NewStyle(ui.ColorYellow)}
+  bc.NumStyles = []ui.Style{ui.NewStyle(ui.ColorBlack)}
+
+  return bc
+
+}
 
 
 func createDashboardGrid(courses *[]Course) *ui.Grid {
@@ -23,16 +56,11 @@ func createDashboardGrid(courses *[]Course) *ui.Grid {
 	// p0.Text = someVal
 	p0.Border = true
 
+  // render the logo in the top left
   cl := canvasLogo()
 
-  bc := widgets.NewBarChart()
-	bc.Data = []float64{3, 2, 5, 3, 9, 3}
-	bc.Labels = []string{"S0", "S1", "S2", "S3", "S4", "S5"}
-	bc.Title = "Bar Chart"
-	bc.BarWidth = 5
-	bc.BarColors = []ui.Color{ui.ColorRed, ui.ColorGreen}
-	bc.LabelStyles = []ui.Style{ui.NewStyle(ui.ColorBlue)}
-	bc.NumStyles = []ui.Style{ui.NewStyle(ui.ColorYellow)}
+  // render the bar chart with current course grades
+  bc := createSummaryBarchart(courses)
   
 	dashboardGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()

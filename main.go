@@ -40,7 +40,7 @@ func createMainTabPane(courses *[]Course) *widgets.TabPane {
 func  handleChoice(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
   switch tabpane.ActiveTabIndex {
   case 0:
-    contentGrid = createDashboardGrid("Dashboard YO!!!!!!")
+    // contentGrid = createDashboardGrid("Dashboard YO!!!!!!")
     masterGrid.Items[1].Entry = contentGrid
     // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
     ui.Render(masterGrid)
@@ -102,7 +102,9 @@ func main() {
   // declare tab widget
   tabpane := createMainTabPane(courses)
 
-  contentGrid := createDashboardGrid("front page")
+  // contentGrid := createDashboardGrid("front page")
+  dashboard := createDashboardGrid(courses)
+  contentGrid := dashboard
 
   // Do the initial drawing of the main dash
   masterGrid = updateMasterGrid(masterGrid, tabpane, contentGrid)
