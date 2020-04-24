@@ -6,17 +6,41 @@ import (
 	// "net/http"
 	// "github.com/spf13/viper"
 	"fmt"
-	// "log"
+  // "log"
 	"math"
 	"strconv"
 
-	// "time"
+  "time"
 	// "reflect"
 	// "time"
 	// "bytes"
+  strip "github.com/grokify/html-strip-tags-go"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 )
+
+func createAnnouncementWindow(course Course) *widgets.Paragraph {
+
+  announcements := fetchAnnouncements(course.ID)
+  // log.Panic(announcements)
+  
+  
+  p4 := widgets.NewParagraph()
+	p4.Title = "Latest Announcement"
+	p4.BorderStyle.Fg = ui.ColorBlue
+  var recentPostTime time.Time
+  var recentAnnouncement Announcement
+  for _, ann := range *announcements {
+    if ann.PostedAt.After(recentPostTime) {
+      recentAnnouncement = ann
+    }
+  }
+
+  p4.Text = "[Title](fg:blue,mod:bold): "+recentAnnouncement.Title+"\n"+
+            "[Date](fg:blue,mod:bold): "+recentAnnouncement.PostedAt.Local().Format("Jan 2, 2006")+"\n\n"+
+            strip.StripTags(recentAnnouncement.Message)
+  return p4
+}
 
 func createScorePlot(course Course, assignments *[]Assignment) *widgets.Plot {
   
@@ -93,6 +117,32 @@ func createTodoTable(course Course, assignments *[]Assignment) *widgets.Table {
   }
   return todoTable
 }
+
+func createGradeSummaryTable(assignments *[]Assignment) *widgets.Table {
+
+  var tableData [][]string
+  header := []string{"Name",  "Score"}
+  tableData = append(tableData, header)
+  for _, assn := range *assignments {
+    if !assn.Submission.SubmittedAt.IsZero() {
+      var assignmentData []string
+      assignmentData = append(assignmentData, assn.Name)
+      // assignmentData = append(assignmentData, assn.DueAt.Local().Format("1/2 3:04 PM"))
+      assignmentData = append(assignmentData, fmt.Sprint(assn.Submission.EnteredScore))
+      tableData = append(tableData, assignmentData)
+    }
+  }
+
+  gradeTable := widgets.NewTable()
+  gradeTable.Title = "Recent Scores:"
+  gradeTable.Rows = tableData
+	gradeTable.TextStyle = ui.NewStyle(ui.ColorWhite)
+	gradeTable.RowSeparator = true
+  gradeTable.FillRow = true
+  gradeTable.RowStyles[0] = ui.NewStyle(ui.ColorWhite, ui.ColorBlack, ui.ModifierBold)
+  return gradeTable
+}
+
 
 func createAssignmentProgressBar(course Course, assignments *[]Assignment) *widgets.Gauge {
 
@@ -172,6 +222,10 @@ func createCourseGrid(course Course) *ui.Grid {
   pc := createCoursePieChart(assignmentGroups)
 
   sp := createScorePlot(course, assignments)
+
+  announcements := createAnnouncementWindow(course)
+
+
   // list to select view of course
 	l := widgets.NewList()
 	l.Title = "Pages"
@@ -184,6 +238,7 @@ func createCourseGrid(course Course) *ui.Grid {
   }
 
   todoTable := createTodoTable(course, assignments)
+  gradeTable := createGradeSummaryTable(assignments)
 
 	courseGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
@@ -192,16 +247,20 @@ func createCourseGrid(course Course) *ui.Grid {
 		ui.NewRow(1.0, 
 			ui.NewCol(1.0/6, l), // left column for pages
 			ui.NewCol(5.0/6, // column for everything else
+        ui.NewRow(1.0/20, //maybe some stats here?
+          ui.NewCol(1.0, assignmentProgressBar), // assignment completion progress
+        ),
         ui.NewRow(1.0/4, //maybe some stats here?
           ui.NewCol(1.0/2, p0), // course overview
-          ui.NewCol(1.0/2, assignmentProgressBar), // assignment completion progress
+          ui.NewCol(1.0/2, announcements), // assignment completion progress
         ),
         ui.NewRow(1.0/3,  // 
-          ui.NewCol(1.0/2, todoTable),
-          ui.NewCol(1.0/2, pc),
+          ui.NewCol(2.0/4, todoTable),
+          ui.NewCol(2.0/4, gradeTable),
         ),
         ui.NewRow(1.0/3,  // 
           ui.NewCol(1.0/2, sp),
+          ui.NewCol(1.0/2, pc),
         ),
       ),
 		),

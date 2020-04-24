@@ -32,7 +32,7 @@ func canvasLogo() *widgets.Image {
 			log.Fatalf("failed to decode image: %v", err)
   }
   images = append(images, image)
-
+  img.Border = false
   img.Monochrome = true
   img.MonochromeInvert = true
   img.MonochromeThreshold =5
