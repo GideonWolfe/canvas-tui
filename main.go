@@ -36,31 +36,21 @@ func createMainTabPane(courses *[]Course) *widgets.TabPane {
   return tabpane
 }
 
-// called to handle when a user clicks a different tab
-func  handleChoice(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
-  switch tabpane.ActiveTabIndex {
-  case 0:
-    masterGrid.Items[1].Entry = contentGrid
-    // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
-    ui.Render(masterGrid)
-  case 1:
-    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
-    masterGrid.Items[1].Entry = contentGrid
-    // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
-    ui.Render(masterGrid)
-  case 2:
-    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
-    masterGrid.Items[1].Entry = contentGrid
-    // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
-    ui.Render(masterGrid)
-  case 3:
-    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
-    masterGrid.Items[1].Entry = contentGrid
-    // masterGrid = updateMasterGrid(masterGrid,tabpane,contentGrid)
-    ui.Render(masterGrid)
-  }
-}
 
+func  chooseTab(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
+    // Substitute the current grid for what the user has selected
+
+    // If we click the dashboard 
+    if tabpane.ActiveTabIndex == 0 {
+      masterGrid.Items[1].Entry = contentGrid
+    } else { // for other course pages
+      contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
+      masterGrid.Items[1].Entry = contentGrid
+    }
+    
+    ui.Render(masterGrid)
+    // log.Panic(contentGrid.Title)
+}
 
 
 
@@ -95,6 +85,7 @@ func main() {
   
   // declare master grid and set terminal dimensions
 	masterGrid := ui.NewGrid()
+  masterGrid.Title = "Master Grid"
 	termWidth, termHeight := ui.TerminalDimensions()
 	masterGrid.SetRect(0, 0, termWidth, termHeight)
 
@@ -133,17 +124,21 @@ func main() {
         tabpane.FocusRight()
         ui.Render(tabpane)
       case "j":
-        // variable that points to the list we're on
-        // l := contentGrid.Items[0].Entry.(*widgets.List)
+        // l := contentGrid.Items[1].Entry.(*widgets.List)
+        // l := contentGrid.Items[1].Entry.(*ui.Block)
+        // l := contentGrid.Items[0]
+        // log.Panic(masterGrid.Title)
         // l.ScrollDown()
 				ui.Render(masterGrid)
       case "k":
         // variable that points to the list we're on
         // l := contentGrid.Items[0].Entry.(*widgets.List)
         // l.ScrollUp()
-				ui.Render(masterGrid)
+        ui.Render(masterGrid)
       case "<Enter>":
-        handleChoice(coursePages, tabpane, masterGrid, contentGrid)
+        chooseTab(coursePages, tabpane, masterGrid, contentGrid)
+        // betterChoice(coursePages, tabpane, masterGrid, contentGrid)
+        // updateMasterGrid(masterGrid, tabpane, &coursePages[1])
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				masterGrid.SetRect(0, 0, payload.Width, payload.Height)
