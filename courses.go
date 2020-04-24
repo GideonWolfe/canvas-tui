@@ -121,7 +121,6 @@ func createGradeSummaryTable(assignments *[]Assignment) *widgets.Table {
 
   var tableData [][]string
   header := []string{"Name",  "Score"}
-  tableData = append(tableData, header)
   for _, assn := range *assignments {
     if !assn.Submission.SubmittedAt.IsZero() {
       if assn.Submission.Score > 0{
@@ -134,6 +133,7 @@ func createGradeSummaryTable(assignments *[]Assignment) *widgets.Table {
       }
     }
   }
+  tableData = append(tableData, header)
   // reverse the list
   for i, j := 0, len(tableData)-1; i < j; i, j = i+1, j-1 {
     tableData[i], tableData[j] = tableData[j], tableData[i]
