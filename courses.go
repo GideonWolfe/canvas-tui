@@ -10,7 +10,7 @@ import (
 	"math"
 	"strconv"
 
-  "time"
+  // "time"
 	// "reflect"
 	// "time"
 	// "bytes"
@@ -22,23 +22,23 @@ import (
 func createAnnouncementWindow(course Course) *widgets.Paragraph {
 
   announcements := fetchAnnouncements(course.ID)
-  // log.Panic(announcements)
-  
-  
+ 
   p4 := widgets.NewParagraph()
 	p4.Title = "Latest Announcement"
 	p4.BorderStyle.Fg = ui.ColorBlue
-  var recentPostTime time.Time
   var recentAnnouncement Announcement
+  i := 0
   for _, ann := range *announcements {
-    if ann.PostedAt.After(recentPostTime) {
+    if i == 0 {
       recentAnnouncement = ann
+      break
     }
+    i++
   }
 
   p4.Text = "[Title](fg:blue,mod:bold): "+recentAnnouncement.Title+"\n"+
             "[Date](fg:blue,mod:bold): "+recentAnnouncement.PostedAt.Local().Format("Jan 2, 2006")+"\n\n"+
-            strip.StripTags(recentAnnouncement.Message)
+            strip.StripTags(recentAnnouncement.Message)+"\n"
   return p4
 }
 
@@ -125,11 +125,14 @@ func createGradeSummaryTable(assignments *[]Assignment) *widgets.Table {
   tableData = append(tableData, header)
   for _, assn := range *assignments {
     if !assn.Submission.SubmittedAt.IsZero() {
-      var assignmentData []string
-      assignmentData = append(assignmentData, assn.Name)
-      // assignmentData = append(assignmentData, assn.DueAt.Local().Format("1/2 3:04 PM"))
-      assignmentData = append(assignmentData, fmt.Sprint(assn.Submission.EnteredScore))
-      tableData = append(tableData, assignmentData)
+      if assn.Submission.Score > 0{
+        var assignmentData []string
+        assignmentData = append(assignmentData, assn.Name)
+        // percentScored := float64(assn.Submission.Score/assn.PointsPossible)*100
+        scoreString := fmt.Sprint(assn.Submission.EnteredScore)+"/"+fmt.Sprint(assn.PointsPossible)
+        assignmentData = append(assignmentData, scoreString)
+        tableData = append(tableData, assignmentData)
+      }
     }
   }
 
