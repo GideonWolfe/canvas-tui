@@ -18,6 +18,43 @@ import (
 	"github.com/gizak/termui/v3/widgets"
 )
 
+func createTodoTable(course Course, assignments *[]Assignment) *widgets.Table {
+
+  var tableData [][]string
+  header := []string{"Name", "Due At", "Points"}
+  tableData = append(tableData, header)
+  for _, assn := range *assignments {
+    if assn.Submission.SubmittedAt.IsZero() {
+      var assignmentData []string
+      assignmentData = append(assignmentData, assn.Name)
+      assignmentData = append(assignmentData, assn.DueAt.Local().Format("1/2 3:04"))
+      assignmentData = append(assignmentData, fmt.Sprint(assn.PointsPossible))
+      tableData = append(tableData, assignmentData)
+    }
+  }
+
+  todoTable := widgets.NewTable()
+  todoTable.Title = "To Do:"
+  todoTable.Rows = tableData
+	todoTable.TextStyle = ui.NewStyle(ui.ColorWhite)
+	todoTable.RowSeparator = true
+  todoTable.FillRow = true
+  todoTable.RowStyles[0] = ui.NewStyle(ui.ColorWhite, ui.ColorBlack, ui.ModifierBold)
+	// todoTable.RowStyles[2] = ui.NewStyle(ui.ColorWhite, ui.ColorRed, ui.ModifierBold)
+	// todoTable.RowStyles[3] = ui.NewStyle(ui.ColorYellow)
+  if len(tableData) >= 10 {
+    todoTable.BorderStyle = ui.NewStyle(ui.ColorRed)
+  } else if len(tableData) >=7 { 
+    todoTable.BorderStyle = ui.NewStyle(ui.ColorYellow)
+  } else if len(tableData) >=4 { 
+    todoTable.BorderStyle = ui.NewStyle(ui.ColorBlue)
+  } else if len(tableData) >=2 { 
+    todoTable.BorderStyle = ui.NewStyle(ui.ColorCyan)
+  } else if len(tableData) >= 0 { 
+    todoTable.BorderStyle = ui.NewStyle(ui.ColorGreen)
+  }
+  return todoTable
+}
 
 func createAssignmentProgressBar(course Course, assignments *[]Assignment) *widgets.Gauge {
 
@@ -54,10 +91,8 @@ func createAssignmentProgressBar(course Course, assignments *[]Assignment) *widg
 
 
 func createCoursePieChart(assignmentGroups *[]AssignmentGroup) *widgets.PieChart {
-
   var weights []float64
   var names []string
-  // pie chart to eventually break down course points
   pc := widgets.NewPieChart()
 	pc.Title = "Course Breakdown"
 	pc.AngleOffset = -.5 * math.Pi
@@ -67,10 +102,9 @@ func createCoursePieChart(assignmentGroups *[]AssignmentGroup) *widgets.PieChart
   }
   pc.Data = weights
   pc.LabelFormatter = func(i int, v float64) string {
-    return fmt.Sprintf("%s: %.02f", names[i], v)
+    return fmt.Sprintf("%s: %.f%%", names[i], v)
   }
   return pc
-
 }
 
 
@@ -116,6 +150,7 @@ func createCourseGrid(course Course) *ui.Grid {
     // pc.Data = append(pc.Data, ag.GroupWeight)
   // }
 
+  todoTable := createTodoTable(course, assignments)
 
 	courseGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
@@ -129,6 +164,7 @@ func createCourseGrid(course Course) *ui.Grid {
           ui.NewCol(1.0/2, assignmentProgressBar), // assignment completion progress
         ),
         ui.NewRow(1.0/3,  // 
+          ui.NewCol(1.0/2, todoTable),
           ui.NewCol(1.0/2, pc),
         ),
       ),
