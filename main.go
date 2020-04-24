@@ -52,7 +52,24 @@ func  chooseTab(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.
     // log.Panic(contentGrid.Title)
 }
 
+func  menuScroll(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid, direction string) {
+    // Substitute the current grid for what the user has selected
 
+    // Don't try to scroll on the dashboard
+    if tabpane.ActiveTabIndex != 0 {
+      contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
+      l := contentGrid.Items[0].Entry.(*widgets.List)
+      if direction == "down" {
+        l.ScrollDown()
+      } else if direction == "up"{
+        l.ScrollUp()
+      }
+    }
+
+    
+    ui.Render(masterGrid)
+    // log.Panic(contentGrid.Title)
+}
 
 // called if master grid needs to be updated
 func updateMasterGrid(masterGrid *ui.Grid, tabpane *widgets.TabPane, contentGrid *ui.Grid) *ui.Grid {
@@ -124,21 +141,11 @@ func main() {
         tabpane.FocusRight()
         ui.Render(tabpane)
       case "j":
-        // l := contentGrid.Items[1].Entry.(*widgets.List)
-        // l := contentGrid.Items[1].Entry.(*ui.Block)
-        // l := contentGrid.Items[0]
-        // log.Panic(masterGrid.Title)
-        // l.ScrollDown()
-				ui.Render(masterGrid)
+        menuScroll(coursePages, tabpane, masterGrid, contentGrid, "down")
       case "k":
-        // variable that points to the list we're on
-        // l := contentGrid.Items[0].Entry.(*widgets.List)
-        // l.ScrollUp()
-        ui.Render(masterGrid)
+        menuScroll(coursePages, tabpane, masterGrid, contentGrid, "up")
       case "<Enter>":
         chooseTab(coursePages, tabpane, masterGrid, contentGrid)
-        // betterChoice(coursePages, tabpane, masterGrid, contentGrid)
-        // updateMasterGrid(masterGrid, tabpane, &coursePages[1])
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				masterGrid.SetRect(0, 0, payload.Width, payload.Height)
