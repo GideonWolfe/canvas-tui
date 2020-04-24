@@ -3,20 +3,60 @@ package main
 import (
 	// "encoding/json"
 	// "io/ioutil"
-  // "log"
 	// "net/http"
 	// "github.com/spf13/viper"
-  "fmt"
+	"fmt"
+	// "log"
 	"math"
 	"strconv"
-	// "time"
 
+	// "time"
 	// "reflect"
 	// "time"
 	// "bytes"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 )
+
+func createScorePlot(course Course, assignments *[]Assignment) *widgets.Plot {
+  
+  p0 := widgets.NewPlot()
+	p0.Title = "No Assignments Graded"
+  p0.Data = make([][]float64, 1)
+	p0.Data =[][]float64{{1, 2, 3, 4, 5}}
+	p0.AxesColor = ui.ColorWhite
+	p0.LineColors[0] = ui.ColorGreen
+
+  
+  var dataList [][]float64
+  var plotData []float64
+  for _, assn := range *assignments {
+    if !assn.Submission.SubmittedAt.IsZero() {
+      // if !assn.Submission.GradedAt.IsZero()  { 
+      // TODO An empty list makes a segfault, sending placeholder data does not work!!!
+        plotData = append(plotData, (assn.Submission.Score/float64(assn.PointsPossible))*100)
+      // }
+    }
+  }
+  dataList = append(dataList, plotData)
+
+  // if course.CourseCode == "CSCI 461" {
+    // log.Panic(len(plotData))
+  // }
+
+  p3 := widgets.NewPlot()
+	p3.Title = "Assignment Score(%) Over Time"
+  p3.Data = dataList
+
+  p3.AxesColor = ui.ColorWhite
+  p3.LineColors[0] = ui.ColorCyan
+  p3.Marker = widgets.MarkerBraille
+  p3.PlotType = widgets.LineChart
+  p3.MaxVal = 105
+  p3.HorizontalScale = 3
+
+  return p3
+}
 
 func createTodoTable(course Course, assignments *[]Assignment) *widgets.Table {
 
@@ -27,7 +67,7 @@ func createTodoTable(course Course, assignments *[]Assignment) *widgets.Table {
     if assn.Submission.SubmittedAt.IsZero() {
       var assignmentData []string
       assignmentData = append(assignmentData, assn.Name)
-      assignmentData = append(assignmentData, assn.DueAt.Local().Format("1/2 3:04"))
+      assignmentData = append(assignmentData, assn.DueAt.Local().Format("1/2 3:04 PM"))
       assignmentData = append(assignmentData, fmt.Sprint(assn.PointsPossible))
       tableData = append(tableData, assignmentData)
     }
@@ -40,8 +80,6 @@ func createTodoTable(course Course, assignments *[]Assignment) *widgets.Table {
 	todoTable.RowSeparator = true
   todoTable.FillRow = true
   todoTable.RowStyles[0] = ui.NewStyle(ui.ColorWhite, ui.ColorBlack, ui.ModifierBold)
-	// todoTable.RowStyles[2] = ui.NewStyle(ui.ColorWhite, ui.ColorRed, ui.ModifierBold)
-	// todoTable.RowStyles[3] = ui.NewStyle(ui.ColorYellow)
   if len(tableData) >= 10 {
     todoTable.BorderStyle = ui.NewStyle(ui.ColorRed)
   } else if len(tableData) >=7 { 
@@ -133,6 +171,7 @@ func createCourseGrid(course Course) *ui.Grid {
 
   pc := createCoursePieChart(assignmentGroups)
 
+  sp := createScorePlot(course, assignments)
   // list to select view of course
 	l := widgets.NewList()
 	l.Title = "Pages"
@@ -143,12 +182,6 @@ func createCourseGrid(course Course) *ui.Grid {
   for _, tab := range course.Tabs {
     l.Rows = append(l.Rows, tab.Label)
   }
-
-  // for _, ag := range *assignmentGroups {
-    // f := strconv.FormatFloat(ag.GroupWeight, 'E', -1, 64)
-    // overviewText = overviewText+f+"\n"
-    // pc.Data = append(pc.Data, ag.GroupWeight)
-  // }
 
   todoTable := createTodoTable(course, assignments)
 
@@ -166,6 +199,9 @@ func createCourseGrid(course Course) *ui.Grid {
         ui.NewRow(1.0/3,  // 
           ui.NewCol(1.0/2, todoTable),
           ui.NewCol(1.0/2, pc),
+        ),
+        ui.NewRow(1.0/3,  // 
+          ui.NewCol(1.0/2, sp),
         ),
       ),
 		),
