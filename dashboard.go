@@ -42,8 +42,8 @@ var courseNames []string
 	bc.BarWidth = 15
   bc.BarColors = barColors
 	bc.LabelStyles = []ui.Style{ui.NewStyle(ui.ColorBlue)}
-	// bc.NumStyles = []ui.Style{ui.NewStyle(ui.ColorYellow)}
   bc.NumStyles = []ui.Style{ui.NewStyle(ui.ColorBlack)}
+  bc.BarGap = 0 
 
   return bc
 

@@ -82,20 +82,33 @@ type Calendar struct {
 	Ics string `json:"ics"`
 }
 type Enrollments struct {
-	Type                           string `json:"type"`
-	Role                           string `json:"role"`
-	RoleID                         int    `json:"role_id"`
-	UserID                         int    `json:"user_id"`
-	EnrollmentState                string `json:"enrollment_state"`
-	LimitPrivilegesToCourseSection bool   `json:"limit_privileges_to_course_section"`
+	Type                           string      `json:"type"`
+	Role                           string      `json:"role"`
+	RoleID                         int         `json:"role_id"`
+	UserID                         int         `json:"user_id"`
+	EnrollmentState                string      `json:"enrollment_state"`
+	LimitPrivilegesToCourseSection bool        `json:"limit_privileges_to_course_section"`
+	ComputedCurrentGrade           interface{} `json:"computed_current_grade"`
+	ComputedCurrentScore           float64     `json:"computed_current_score"`
+	ComputedFinalGrade             interface{} `json:"computed_final_grade"`
+	ComputedFinalScore             float64     `json:"computed_final_score"`
 }
 
 func fetchCourses() *[]Course {
 
   // Create URL string from config file
-  // url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60&enrollment_state=active"
-  url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60&enrollment_state=active&incude[]=syllabus_body&include[]=public_description&include[]=course_progress&include[]=sections&include[]=total_students&include[]=favorites&include[]=teachers&include[]=tabs&include[]=course_image&include[]=concluded"
-  // url := viper.Get("canvasdomain").(string) + "api/v1/courses/"
+  url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60&enrollment_state=active"+
+                                                                          "&incude[]=syllabus_body"+
+                                                                          "&include[]=total_scores"+
+                                                                          "&include[]=public_description"+
+                                                                          "&include[]=course_progress"+
+                                                                          "&include[]=sections"+
+                                                                          "&include[]=total_students"+
+                                                                          "&include[]=favorites"+
+                                                                          "&include[]=teachers"+
+                                                                          "&include[]=tabs"+
+                                                                          "&include[]=course_image"+
+                                                                          "&include[]=concluded"
 
   // Create a Bearer string by appending string access token
   var bearer = "Bearer " + viper.Get("canvastoken").(string)

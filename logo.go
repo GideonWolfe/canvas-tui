@@ -29,13 +29,13 @@ func canvasLogo() *widgets.Image {
   img := widgets.NewImage(nil)
   image, _, err := image.Decode(base64.NewDecoder(base64.StdEncoding, strings.NewReader(IMAGE_CODE)))
   if err != nil {
-			log.Fatalf("failed to decode gopher image: %v", err)
+			log.Fatalf("failed to decode image: %v", err)
   }
   images = append(images, image)
 
   img.Monochrome = true
   img.MonochromeInvert = true
-  img.MonochromeThreshold =1
+  img.MonochromeThreshold =5
   img.Image = images[0]
   return img
 }

@@ -3,10 +3,10 @@ package main
 import (
 	// "encoding/json"
 	// "io/ioutil"
-	// "log"
+  "log"
 	// "net/http"
 	// "github.com/spf13/viper"
-	"fmt"
+	// "fmt"
 	"math"
 	"strconv"
 	// "time"
@@ -52,6 +52,36 @@ func createAssignmentProgressBar(course Course, assignments *[]Assignment) *widg
   return g1
 }
 
+
+func createCoursePieChart(assignmentGroups *[]AssignmentGroup) *widgets.PieChart {
+
+  var weights []float64
+  // pie chart to eventually break down course points
+  pc := widgets.NewPieChart()
+	pc.Title = "Course Breakdown"
+  // pc.Data = []float64{.5, .3}
+	pc.AngleOffset = -.5 * math.Pi
+  // pc.LabelFormatter = func(i int, v float64) string {
+    // return fmt.Sprintf("%.02f", v)
+  // }
+
+  for _, ag := range *assignmentGroups {
+    // f := strconv.FormatFloat(ag.GroupWeight, 'E', -1, 64)
+    weights = append(weights, float64((float64(ag.GroupWeight)/float64(100.0))))
+    // log.Panic(ag.GroupWeight)
+    // log.Println(float64(ag.GroupWeight)/float64(100.0))
+    log.Panic(ag)
+  }
+  log.Panic(weights)
+  pc.Data = weights
+
+  return pc
+
+}
+
+
+
+
 // based on an input course object, this function generates 
 // a grid with widgets populated with data from the course
 func createCourseGrid(course Course) *ui.Grid {
@@ -73,16 +103,7 @@ func createCourseGrid(course Course) *ui.Grid {
 
   var assignmentGroups *[]AssignmentGroup = fetchAssignmentGroups(course.ID)
 
-  // pie chart to eventually break down course points
-  pc := widgets.NewPieChart()
-	pc.Title = "Course Breakdown"
-  pc.Data = []float64{.5, .3}
-  // pc.Data = []float64{.10, .10, .05, .20, .05, .13, .14, .25}
-	pc.AngleOffset = -.5 * math.Pi
-  pc.LabelFormatter = func(i int, v float64) string {
-    return fmt.Sprintf("%.02f", v)
-  }
-
+  pc := createCoursePieChart(assignmentGroups)
 
   // list to select view of course
 	l := widgets.NewList()
@@ -95,11 +116,11 @@ func createCourseGrid(course Course) *ui.Grid {
     l.Rows = append(l.Rows, tab.Label)
   }
 
-  for _, ag := range *assignmentGroups {
-    f := strconv.FormatFloat(ag.GroupWeight, 'E', -1, 64)
-    overviewText = overviewText+f+"\n"
-    pc.Data = append(pc.Data, ag.GroupWeight)
-  }
+  // for _, ag := range *assignmentGroups {
+    // f := strconv.FormatFloat(ag.GroupWeight, 'E', -1, 64)
+    // overviewText = overviewText+f+"\n"
+    // pc.Data = append(pc.Data, ag.GroupWeight)
+  // }
 
 
 	courseGrid := ui.NewGrid()
