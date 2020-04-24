@@ -3,7 +3,7 @@ package main
 import (
 	// "encoding/json"
 	// "io/ioutil"
-  "log"
+  // "log"
 	// "net/http"
 	// "github.com/spf13/viper"
 	// "fmt"
@@ -68,11 +68,13 @@ func createCoursePieChart(assignmentGroups *[]AssignmentGroup) *widgets.PieChart
   for _, ag := range *assignmentGroups {
     // f := strconv.FormatFloat(ag.GroupWeight, 'E', -1, 64)
     weights = append(weights, float64((float64(ag.GroupWeight)/float64(100.0))))
-    // log.Panic(ag.GroupWeight)
+    // if ag.Name == "Take Home Midterm"{
+      // log.Panic(ag)
+    // }
     // log.Println(float64(ag.GroupWeight)/float64(100.0))
-    log.Panic(ag)
+    // log.Panicf("%T", ag.GroupWeight)
   }
-  log.Panic(weights)
+  // log.Panic(assignmentGroups)
   pc.Data = weights
 
   return pc

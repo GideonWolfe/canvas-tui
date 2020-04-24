@@ -17,23 +17,24 @@ type AssignmentGroup struct {
   Position        int             `json:"position"`
   GroupWeight     float64         `json:"group_weight"`
   SisSourceID     interface{}     `json:"sis_source_id"`
-  IntegrationData IntegrationData `json:"integration_data"`
+  IntegrationData IntegrationData `json:"-"`
   Rules           Rules           `json:"rules"`
   Assignments     []Assignment    `json:"assignments"`
-  AnyAssignmentInClosedGradingPeriod bool            `json:"any_assignment_in_closed_grading_period"`
+  // AnyAssignmentInClosedGradingPeriod bool            `json:"any_assignment_in_closed_grading_period"`
 }
 
 type IntegrationData struct {
 }
 type Rules struct {
-	DropLowest int   `json:"drop_lowest"`
-	NeverDrop  []int `json:"never_drop"`
+  DropLowest int   `json:"drop_lowest"`
+  DropHighest int  `json:"drop_highest"`
+  NeverDrop  []int `json:"never_drop"`
 }
 
 func fetchAssignmentGroups(courseID int) *[]AssignmentGroup {
 
   // Create URL string from config file
-  url := viper.Get("canvasdomain").(string)+"api/v1/courses/"+strconv.Itoa(courseID)+"/assignments?per_page=100&include[]=submission&include=all_dates"
+  url := viper.Get("canvasdomain").(string)+"api/v1/courses/"+strconv.Itoa(courseID)+"/assignment_groups?per_page=100"
 
   // Create a Bearer string by appending string access token
   var bearer = "Bearer " + viper.Get("canvastoken").(string)
