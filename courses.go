@@ -6,7 +6,7 @@ import (
   // "log"
 	// "net/http"
 	// "github.com/spf13/viper"
-	// "fmt"
+  "fmt"
 	"math"
 	"strconv"
 	// "time"
@@ -56,27 +56,19 @@ func createAssignmentProgressBar(course Course, assignments *[]Assignment) *widg
 func createCoursePieChart(assignmentGroups *[]AssignmentGroup) *widgets.PieChart {
 
   var weights []float64
+  var names []string
   // pie chart to eventually break down course points
   pc := widgets.NewPieChart()
 	pc.Title = "Course Breakdown"
-  // pc.Data = []float64{.5, .3}
 	pc.AngleOffset = -.5 * math.Pi
-  // pc.LabelFormatter = func(i int, v float64) string {
-    // return fmt.Sprintf("%.02f", v)
-  // }
-
   for _, ag := range *assignmentGroups {
-    // f := strconv.FormatFloat(ag.GroupWeight, 'E', -1, 64)
-    weights = append(weights, float64((float64(ag.GroupWeight)/float64(100.0))))
-    // if ag.Name == "Take Home Midterm"{
-      // log.Panic(ag)
-    // }
-    // log.Println(float64(ag.GroupWeight)/float64(100.0))
-    // log.Panicf("%T", ag.GroupWeight)
+    weights = append(weights, ag.GroupWeight)
+    names = append(names, ag.Name)
   }
-  // log.Panic(assignmentGroups)
   pc.Data = weights
-
+  pc.LabelFormatter = func(i int, v float64) string {
+    return fmt.Sprintf("%s: %.02f", names[i], v)
+  }
   return pc
 
 }
@@ -136,7 +128,9 @@ func createCourseGrid(course Course) *ui.Grid {
           ui.NewCol(1.0/2, p0), // course overview
           ui.NewCol(1.0/2, assignmentProgressBar), // assignment completion progress
         ),
-        ui.NewRow(1.0/3, pc), // 
+        ui.NewRow(1.0/3,  // 
+          ui.NewCol(1.0/2, pc),
+        ),
       ),
 		),
   )
