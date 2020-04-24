@@ -52,16 +52,38 @@ func  chooseTab(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.
   // log.Panic(contentGrid.Title)
 }
 
-func  handleSpace(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
+func  handleSpace(courseMasterGrids []ui.Grid, courseGradeGrids []ui.Grid, courseAnnouncementGrids []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
   // Substitute the current grid for what the user has selected
 
   // If we click the dashboard 
   if tabpane.ActiveTabIndex == 0 {
     masterGrid.Items[1].Entry = contentGrid
+
   } else { // for other course pages
-    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
-    contentGrid.Items[1].Entry = placeholder()
-    masterGrid.Items[1].Entry = contentGrid
+    // contentGrid = &courseGradeGrids[tabpane.ActiveTabIndex-1]
+    // get the currently selected item
+    contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
+    item := contentGrid.Items[0].Entry.(*widgets.List).SelectedRow
+    itemStr := contentGrid.Items[0].Entry.(*widgets.List).Rows[item]
+  
+    if itemStr == "Home" {
+      contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
+      masterGrid.Items[1].Entry = contentGrid
+    } else if itemStr == "Grades" {
+      contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
+      contentGrid.Items[1].Entry = &courseGradeGrids[tabpane.ActiveTabIndex-1]
+      masterGrid.Items[1].Entry = contentGrid
+    } else if itemStr == "Announcements" {
+      contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
+      contentGrid.Items[1].Entry = &courseAnnouncementGrids[tabpane.ActiveTabIndex-1]
+      masterGrid.Items[1].Entry = contentGrid
+    } else {
+      contentGrid.Items[1].Entry = placeholder()
+      masterGrid.Items[1].Entry = contentGrid
+    } 
+
+
+
   }
   
   ui.Render(masterGrid)
@@ -130,9 +152,13 @@ func main() {
   masterGrid = updateMasterGrid(masterGrid, tabpane, contentGrid)
 
   var coursePages []ui.Grid
+  var courseGradePages []ui.Grid
+  var courseAnnouncementPages []ui.Grid
   for _, crs := range *courses {
     if crs.EndAt.IsZero() {
       coursePages = append(coursePages, *createCourseGrid(crs))
+      courseGradePages = append(courseGradePages, *createGradeGrid(crs))
+      courseAnnouncementPages = append(courseAnnouncementPages, *createAnnouncementGrid(crs))
     }
   }
 
@@ -160,7 +186,7 @@ func main() {
       case "<Enter>":
         chooseTab(coursePages, tabpane, masterGrid, contentGrid)
       case "<Space>":
-        handleSpace(coursePages, tabpane, masterGrid, contentGrid)
+        handleSpace(coursePages, courseGradePages, courseAnnouncementPages, tabpane, masterGrid, contentGrid)
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				masterGrid.SetRect(0, 0, payload.Width, payload.Height)

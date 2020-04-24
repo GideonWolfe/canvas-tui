@@ -109,6 +109,7 @@ func createDashboardGrid(courses *[]Course) *ui.Grid {
   todoTable := createTodoTableDash(courses)
   
 	dashboardGrid := ui.NewGrid()
+  dashboardGrid.Title = "Dashboard"
 	termWidth, termHeight := ui.TerminalDimensions()
 	dashboardGrid.SetRect(0, 0, termWidth, termHeight)
   dashboardGrid.Set(

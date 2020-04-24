@@ -144,7 +144,6 @@ func createGradeSummaryTable(assignments *[]Assignment) *widgets.Table {
   for i, j := 0, len(tableData)-1; i < j; i, j = i+1, j-1 {
     tableData[i], tableData[j] = tableData[j], tableData[i]
   }
-
   gradeTable := widgets.NewTable()
   gradeTable.Title = "Recent Scores:"
   gradeTable.Rows = tableData
