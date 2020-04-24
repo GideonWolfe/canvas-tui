@@ -215,7 +215,7 @@ func createCoursePieChart(assignmentGroups *[]AssignmentGroup) *widgets.PieChart
 
 // based on an input course object, this function generates 
 // a grid with widgets populated with data from the course
-func createCourseGrid(course Course) *ui.Grid {
+func createCourseOverviewGrid(course Course) *ui.Grid {
 
   var assignments *[]Assignment = fetchAssignments(course.ID)
 
@@ -260,34 +260,29 @@ func createCourseGrid(course Course) *ui.Grid {
 	courseGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
 	courseGrid.SetRect(0, 0, termWidth, termHeight)
+  courseGrid.Title = "Course Overview Grid"
   
 
   courseGrid.Set(
 		ui.NewRow(1.0, 
-			ui.NewCol(1.0/6, l), // left column for pages
-			ui.NewCol(5.0/6, // column for everything else
-        ui.NewRow(1.0/20, //maybe some stats here?
-          ui.NewCol(1.0, assignmentProgressBar), // assignment completion progress
-        ),
-        ui.NewRow(1.0/4, //maybe some stats here?
-          ui.NewCol(1.0/7, p0), // course overview
-          ui.NewCol(3.0/7, todoTable), // assignment completion progress
-          ui.NewCol(3.0/7, gradeTable), // assignment completion progress
-        ),
-        ui.NewRow(1.0/3,  // 
-          ui.NewCol(2.0/4, announcements),
-          ui.NewCol(2.0/4, syllabus),
-        ),
-        ui.NewRow(1.0/3,  // 
-          ui.NewCol(1.0/2, sp),
-          ui.NewCol(1.0/2, pc),
-        ),
+      ui.NewRow(1.0/20, //maybe some stats here?
+        ui.NewCol(1.0, assignmentProgressBar), // assignment completion progress
       ),
-		),
+      ui.NewRow(1.0/4, //maybe some stats here?
+        ui.NewCol(1.0/7, p0), // course overview
+        ui.NewCol(3.0/7, todoTable), // assignment completion progress
+        ui.NewCol(3.0/7, gradeTable), // assignment completion progress
+      ),
+      ui.NewRow(1.0/3,  // 
+        ui.NewCol(2.0/4, announcements),
+        ui.NewCol(2.0/4, syllabus),
+      ),
+      ui.NewRow(1.0/3,  // 
+        ui.NewCol(1.0/2, sp),
+        ui.NewCol(1.0/2, pc),
+      ),
+    ),
   )
-
-
-
   return courseGrid
 }
 

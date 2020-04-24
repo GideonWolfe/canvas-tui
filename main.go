@@ -38,37 +38,50 @@ func createMainTabPane(courses *[]Course) *widgets.TabPane {
 
 
 func  chooseTab(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
-    // Substitute the current grid for what the user has selected
+  // Substitute the current grid for what the user has selected
 
-    // If we click the dashboard 
-    if tabpane.ActiveTabIndex == 0 {
-      masterGrid.Items[1].Entry = contentGrid
-    } else { // for other course pages
-      contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
-      masterGrid.Items[1].Entry = contentGrid
-    }
-    
-    ui.Render(masterGrid)
-    // log.Panic(contentGrid.Title)
+  // If we click the dashboard 
+  if tabpane.ActiveTabIndex == 0 {
+    masterGrid.Items[1].Entry = contentGrid
+  } else { // for other course pages
+    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
+    masterGrid.Items[1].Entry = contentGrid
+  }
+  
+  ui.Render(masterGrid)
+  // log.Panic(contentGrid.Title)
 }
 
+func  handleSpace(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
+  // Substitute the current grid for what the user has selected
+
+  // If we click the dashboard 
+  if tabpane.ActiveTabIndex == 0 {
+    masterGrid.Items[1].Entry = contentGrid
+  } else { // for other course pages
+    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
+    contentGrid.Items[1].Entry = placeholder()
+    masterGrid.Items[1].Entry = contentGrid
+  }
+  
+  ui.Render(masterGrid)
+  // log.Panic(contentGrid.Title)
+}
+
+
 func  menuScroll(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid, direction string) {
-    // Substitute the current grid for what the user has selected
-
-    // Don't try to scroll on the dashboard
-    if tabpane.ActiveTabIndex != 0 {
-      contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
-      l := contentGrid.Items[0].Entry.(*widgets.List)
-      if direction == "down" {
-        l.ScrollDown()
-      } else if direction == "up"{
-        l.ScrollUp()
-      }
+  // Substitute the current grid for what the user has selected
+  // Don't try to scroll on the dashboard
+  if tabpane.ActiveTabIndex != 0 {
+    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
+    l := contentGrid.Items[0].Entry.(*widgets.List)
+    if direction == "down" {
+      l.ScrollDown()
+    } else if direction == "up"{
+      l.ScrollUp()
     }
-
-    
-    ui.Render(masterGrid)
-    // log.Panic(contentGrid.Title)
+  }
+  ui.Render(masterGrid)
 }
 
 // called if master grid needs to be updated
@@ -146,6 +159,8 @@ func main() {
         menuScroll(coursePages, tabpane, masterGrid, contentGrid, "up")
       case "<Enter>":
         chooseTab(coursePages, tabpane, masterGrid, contentGrid)
+      case "<Space>":
+        handleSpace(coursePages, tabpane, masterGrid, contentGrid)
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				masterGrid.SetRect(0, 0, payload.Width, payload.Height)
