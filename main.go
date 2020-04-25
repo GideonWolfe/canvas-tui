@@ -37,14 +37,14 @@ func createMainTabPane(courses *[]Course) *widgets.TabPane {
 }
 
 
-func  chooseTab(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
+func  chooseTab(courseMasterGrids []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
   // Substitute the current grid for what the user has selected
 
   // If we click the dashboard 
   if tabpane.ActiveTabIndex == 0 {
     masterGrid.Items[1].Entry = contentGrid
   } else { // for other course pages
-    contentGrid = &coursePages[tabpane.ActiveTabIndex-1]
+    contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
     masterGrid.Items[1].Entry = contentGrid
   }
   
@@ -52,7 +52,7 @@ func  chooseTab(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.
   // log.Panic(contentGrid.Title)
 }
 
-func  handleSpace(courseMasterGrids []ui.Grid, courseGradeGrids []ui.Grid, courseAnnouncementGrids []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
+func  handleSpace(courseMasterGrids []ui.Grid, courseOverviewGrids []ui.Grid, courseGradeGrids []ui.Grid, courseAnnouncementGrids []ui.Grid, courseSyllabusGrids []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
   // Substitute the current grid for what the user has selected
 
   // If we click the dashboard 
@@ -68,6 +68,7 @@ func  handleSpace(courseMasterGrids []ui.Grid, courseGradeGrids []ui.Grid, cours
   
     if itemStr == "Home" {
       contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
+      contentGrid.Items[1].Entry = &courseOverviewGrids[tabpane.ActiveTabIndex-1] 
       masterGrid.Items[1].Entry = contentGrid
     } else if itemStr == "Grades" {
       contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
@@ -76,6 +77,10 @@ func  handleSpace(courseMasterGrids []ui.Grid, courseGradeGrids []ui.Grid, cours
     } else if itemStr == "Announcements" {
       contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
       contentGrid.Items[1].Entry = &courseAnnouncementGrids[tabpane.ActiveTabIndex-1]
+      masterGrid.Items[1].Entry = contentGrid
+    } else if itemStr == "Syllabus" {
+      contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
+      contentGrid.Items[1].Entry = &courseSyllabusGrids[tabpane.ActiveTabIndex-1]
       masterGrid.Items[1].Entry = contentGrid
     } else {
       contentGrid.Items[1].Entry = placeholder()
@@ -151,14 +156,18 @@ func main() {
   // Do the initial drawing of the main dash
   masterGrid = updateMasterGrid(masterGrid, tabpane, contentGrid)
 
-  var coursePages []ui.Grid
-  var courseGradePages []ui.Grid
-  var courseAnnouncementPages []ui.Grid
+  var courseMasterGrids []ui.Grid
+  var courseGradeGrids []ui.Grid
+  var courseAnnouncementGrids []ui.Grid
+  var courseOverviewGrids []ui.Grid
+  var courseSyllabusGrids []ui.Grid
   for _, crs := range *courses {
     if crs.EndAt.IsZero() {
-      coursePages = append(coursePages, *createCourseGrid(crs))
-      courseGradePages = append(courseGradePages, *createGradeGrid(crs))
-      courseAnnouncementPages = append(courseAnnouncementPages, *createAnnouncementGrid(crs))
+      courseMasterGrids = append(courseMasterGrids, *createCourseGrid(crs))
+      courseGradeGrids = append(courseGradeGrids, *createGradeGrid(crs))
+      courseAnnouncementGrids = append(courseAnnouncementGrids, *createAnnouncementGrid(crs))
+      courseOverviewGrids = append(courseOverviewGrids, *createCourseOverviewGrid(crs))
+      courseSyllabusGrids = append(courseSyllabusGrids, *createSyllabusGrid(crs))
     }
   }
 
@@ -180,13 +189,13 @@ func main() {
         tabpane.FocusRight()
         ui.Render(tabpane)
       case "j":
-        menuScroll(coursePages, tabpane, masterGrid, contentGrid, "down")
+        menuScroll(courseMasterGrids, tabpane, masterGrid, contentGrid, "down")
       case "k":
-        menuScroll(coursePages, tabpane, masterGrid, contentGrid, "up")
+        menuScroll(courseMasterGrids, tabpane, masterGrid, contentGrid, "up")
       case "<Enter>":
-        chooseTab(coursePages, tabpane, masterGrid, contentGrid)
+        chooseTab(courseMasterGrids, tabpane, masterGrid, contentGrid)
       case "<Space>":
-        handleSpace(coursePages, courseGradePages, courseAnnouncementPages, tabpane, masterGrid, contentGrid)
+        handleSpace(courseMasterGrids, courseOverviewGrids, courseGradeGrids, courseAnnouncementGrids, courseSyllabusGrids, tabpane, masterGrid, contentGrid)
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				masterGrid.SetRect(0, 0, payload.Width, payload.Height)
