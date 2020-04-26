@@ -156,18 +156,48 @@ func main() {
   // Do the initial drawing of the main dash
   masterGrid = updateMasterGrid(masterGrid, tabpane, contentGrid)
 
+  // one list of assignments per course
+  var assignmentsMatrix [][]Assignment
+
+  // one list of announcements per course
+  var announcementMatrix [][]Announcement
+
+  // one master grid per course
   var courseMasterGrids []ui.Grid
+
+  // one grade grid per course 
   var courseGradeGrids []ui.Grid
+
+  // one announcement grid per course 
   var courseAnnouncementGrids []ui.Grid
+
+  // one course overview grid per course 
   var courseOverviewGrids []ui.Grid
+
+  // one syllabus grid per course 
   var courseSyllabusGrids []ui.Grid
+
+  // one assignment grid per course
+  var courseAssignmentGrids []ui.Grid
+
+
+  // first fetch all the assignments to reduce redundant API calls
   for _, crs := range *courses {
     if crs.EndAt.IsZero() {
-      courseMasterGrids = append(courseMasterGrids, *createCourseGrid(crs))
+      assignmentsMatrix = append(assignmentsMatrix, *fetchAssignments(crs.ID))
+      announcementMatrix = append(announcementMatrix, *fetchAnnouncements(crs.ID))
+    }
+  }
+  i := 0
+  for _, crs := range *courses {
+    if crs.EndAt.IsZero() {
+      courseMasterGrids = append(courseMasterGrids, *createCourseGrid(crs, &assignmentsMatrix[i], &announcementMatrix[i]))
+      courseOverviewGrids = append(courseOverviewGrids, *createCourseOverviewGrid(crs, &assignmentsMatrix[i], &announcementMatrix[i]))
       courseGradeGrids = append(courseGradeGrids, *createGradeGrid(crs))
-      courseAnnouncementGrids = append(courseAnnouncementGrids, *createAnnouncementGrid(crs))
-      courseOverviewGrids = append(courseOverviewGrids, *createCourseOverviewGrid(crs))
+      courseAnnouncementGrids = append(courseAnnouncementGrids, *createAnnouncementGrid(crs, &announcementMatrix[i]))
       courseSyllabusGrids = append(courseSyllabusGrids, *createSyllabusGrid(crs))
+      courseAssignmentGrids = append(courseAssignmentGrids, *createAssignmentGrid(crs, &assignmentsMatrix[i]))
+      i++
     }
   }
 

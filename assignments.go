@@ -11,35 +11,53 @@ import (
 	// "reflect"
 	// "time"
 	// "bytes"
+  "fmt"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 )
 
+
+
+func createAssignmentTable(assignments *[]Assignment) *widgets.Table {
+
+  var tableData [][]string
+  header := []string{"Name",  "Score"}
+  for _, assn := range *assignments {
+    var assignmentData []string
+    assignmentData = append(assignmentData, assn.Name)
+    // percentScored := float64(assn.Submission.Score/assn.PointsPossible)*100
+    scoreString := fmt.Sprint(assn.Submission.EnteredScore)+"/"+fmt.Sprint(assn.PointsPossible)
+    assignmentData = append(assignmentData, scoreString)
+    tableData = append(tableData, assignmentData)
+  }
+  tableData = append(tableData, header)
+  // reverse the list
+  for i, j := 0, len(tableData)-1; i < j; i, j = i+1, j-1 {
+    tableData[i], tableData[j] = tableData[j], tableData[i]
+  }
+
+  assignmentTable := widgets.NewTable()
+  assignmentTable.Title = "Scores:"
+  assignmentTable.Rows = tableData
+	assignmentTable.TextStyle = ui.NewStyle(ui.ColorWhite)
+	assignmentTable.RowSeparator = true
+  assignmentTable.FillRow = true
+  assignmentTable.RowStyles[0] = ui.NewStyle(ui.ColorWhite, ui.ColorBlack, ui.ModifierBold)
+  return assignmentTable
+}
+
 // based on an input course object, this function generates 
 // a grid with widgets populated with data from the course
-func createAssignmentGrid(course Course) *ui.Grid {
+func createAssignmentGrid(course Course, assignments *[]Assignment) *ui.Grid {
 
-  // var assignments *[]Assignment = fetchAssignments(course.ID)
-
-  // dummy placeholder widget
-  p0 := widgets.NewParagraph()
-  p0.Title = "Overview"
-  p0.Text = "This is a placeholder dashboard"
-	p0.Border = true
-
-	assignmentGrid := ui.NewGrid()
+  assignmentGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
 	assignmentGrid.SetRect(0, 0, termWidth, termHeight)
   assignmentGrid.Title = "Course Overview Grid"
-
   assignmentGrid.Set(
 		ui.NewRow(1.0, 
-			ui.NewCol(1.0, p0), // left column for pages
+			ui.NewCol(1.0, createAssignmentTable(assignments)), 
 		),
   )
-
-
-
   return assignmentGrid
 }
-

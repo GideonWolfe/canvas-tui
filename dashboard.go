@@ -93,6 +93,46 @@ var courseNames []string
 
 }
 
+func createSummaryStackedBarchart(courses *[]Course) *widgets.StackedBarChart {
+  var courseNames []string
+  // var courseScores [][]float64
+  // var barColors []ui.Color
+  bc := widgets.NewStackedBarChart()
+  bc.Data = make([][]float64, len(*courses))
+  i := 0
+  for _, crs := range *courses {
+    if crs.EndAt.IsZero() {
+      currentScore := crs.Enrollments[0].ComputedCurrentScore
+      finalScore := crs.Enrollments[0].ComputedFinalScore
+      courseNames = append(courseNames, crs.CourseCode)
+      // courseScores = append(courseScores, currentScore)
+      bc.Data[i] = []float64{finalScore, currentScore}
+      // if currentScore > 80 {
+        // barColors = append(barColors, ui.ColorGreen)
+      // } else if currentScore > 70 {
+        // barColors = append(barColors, ui.ColorYellow)
+      // } else if currentScore > 60 {
+        // barColors = append(barColors, ui.ColorMagenta)
+      // } else if currentScore > 50 {
+        // barColors = append(barColors, ui.ColorRed)
+      // }
+    }
+    i++
+  }
+
+  // bc.Data = courseScores
+  bc.Labels = courseNames
+	bc.Title = "Current Course Scores"
+	bc.BarWidth = 15
+  // bc.BarColors = barColors
+	bc.LabelStyles = []ui.Style{ui.NewStyle(ui.ColorBlue)}
+  bc.NumStyles = []ui.Style{ui.NewStyle(ui.ColorBlack)}
+  bc.BarGap = 0 
+
+  return bc
+
+}
+
 
 func createDashboardGrid(courses *[]Course) *ui.Grid {
   // dummy placeholder widget
@@ -105,6 +145,7 @@ func createDashboardGrid(courses *[]Course) *ui.Grid {
 
   // render the bar chart with current course grades
   bc := createSummaryBarchart(courses)
+  // sbc := createSummayStackedBarchart(courses)
 
   todoTable := createTodoTableDash(courses)
   

@@ -18,8 +18,8 @@ import (
 	"github.com/gizak/termui/v3/widgets"
 )
 
-func createAnnouncementWindow(course Course) *widgets.Paragraph {
-  announcements := fetchAnnouncements(course.ID)
+func createAnnouncementWindow(course Course, announcements *[]Announcement) *widgets.Paragraph {
+  // announcements := fetchAnnouncements(course.ID)
   p4 := widgets.NewParagraph()
 	p4.Title = "Latest Announcement"
 	p4.BorderStyle.Fg = ui.ColorBlue
@@ -214,9 +214,8 @@ func createCoursePieChart(assignmentGroups *[]AssignmentGroup) *widgets.PieChart
 
 // based on an input course object, this function generates 
 // a grid with widgets populated with data from the course
-func createCourseOverviewGrid(course Course) *ui.Grid {
+func createCourseOverviewGrid(course Course, assignments *[]Assignment, announcements *[]Announcement) *ui.Grid {
 
-  var assignments *[]Assignment = fetchAssignments(course.ID)
 
   var overviewText string = "Professor: "+course.Teachers[0].DisplayName+"\n" +
                             "Students: "+strconv.FormatInt(int64(course.TotalStudents), 10)+"\n" +
@@ -237,7 +236,7 @@ func createCourseOverviewGrid(course Course) *ui.Grid {
 
   sp := createScorePlot(course, assignments)
 
-  announcements := createAnnouncementWindow(course)
+  announcementWindow := createAnnouncementWindow(course, announcements)
 
   syllabus := createSyllabusWindow(course)
 
@@ -273,7 +272,7 @@ func createCourseOverviewGrid(course Course) *ui.Grid {
         ui.NewCol(3.0/7, gradeTable), // assignment completion progress
       ),
       ui.NewRow(1.0/3,  // 
-        ui.NewCol(2.0/4, announcements),
+        ui.NewCol(2.0/4, announcementWindow),
         ui.NewCol(2.0/4, syllabus),
       ),
       ui.NewRow(1.0/3,  // 

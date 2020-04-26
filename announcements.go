@@ -32,29 +32,28 @@ func createAnnouncementTable(announcements *[]Announcement, width int) *widgets.
   header := []string{"Message"}
   tableData = append(tableData, header)
   for _, ann := range *announcements {
-        var assignmentData []string
-        // assignmentData = append(assignmentData, ann.PostedAt.Local().Format("Jan 2"))
-        assignmentData = append(assignmentData, strip.StripTags(ann.Message))
-        tableData = append(tableData, assignmentData)
+        var announcementData []string
+        announcementData = append(announcementData, strip.StripTags(ann.Message))
+        tableData = append(tableData, announcementData)
   }
  
-  assignmentTable := widgets.NewTable()
-  assignmentTable.Title = "Announcements:"
-  assignmentTable.Rows = tableData
-  assignmentTable.TextStyle = ui.NewStyle(ui.ColorWhite)
-  assignmentTable.RowSeparator = true
-  assignmentTable.FillRow = false
+  announcementData := widgets.NewTable()
+  announcementData.Title = "Announcements:"
+  announcementData.Rows = tableData
+  announcementData.TextStyle = ui.NewStyle(ui.ColorWhite)
+  announcementData.RowSeparator = true
+  announcementData.FillRow = false
   // assignmentTable.RowStyles
   // assignmentTable.ColumnWidths = []int{10, width}
-  assignmentTable.RowStyles[0] = ui.NewStyle(ui.ColorWhite, ui.ColorBlack, ui.ModifierBold)
-  return assignmentTable
+  announcementData.RowStyles[0] = ui.NewStyle(ui.ColorWhite, ui.ColorBlack, ui.ModifierBold)
+  return announcementData
 
 }
 
 
-func createAnnouncementGrid(course Course) *ui.Grid {
+func createAnnouncementGrid(course Course, announcements *[]Announcement) *ui.Grid {
 
-  var announcements *[]Announcement = fetchAnnouncements(course.ID)
+  // var announcements *[]Announcement = fetchAnnouncements(course.ID)
   // var announcmentParagraphs []widgets.Paragraph
 
   announcementGrid := ui.NewGrid()
