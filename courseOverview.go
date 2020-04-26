@@ -266,16 +266,16 @@ func createCourseOverviewGrid(course Course, assignments *[]Assignment, announce
       ui.NewRow(1.0/20, //maybe some stats here?
         ui.NewCol(1.0, assignmentProgressBar), // assignment completion progress
       ),
-      ui.NewRow(1.0/4, //maybe some stats here?
+      ui.NewRow(7.0/20, //maybe some stats here?
         ui.NewCol(1.0/7, p0), // course overview
         ui.NewCol(3.0/7, todoTable), // assignment completion progress
         ui.NewCol(3.0/7, gradeTable), // assignment completion progress
       ),
-      ui.NewRow(1.0/3,  // 
+      ui.NewRow(7.0/20,  // 
         ui.NewCol(2.0/4, announcementWindow),
         ui.NewCol(2.0/4, syllabus),
       ),
-      ui.NewRow(1.0/3,  // 
+      ui.NewRow(5.0/20,  // 
         ui.NewCol(1.0/2, sp),
         ui.NewCol(1.0/2, pc),
       ),
