@@ -99,6 +99,7 @@ func fetchCourses() *[]Course {
 
   // Create URL string from config file
   url := viper.Get("canvasdomain").(string) + "api/v1/courses?per_page=60&enrollment_state=active"+
+                                                                          "&enrollment_type=student" +
                                                                           "&include[]=syllabus_body"+
                                                                           "&include[]=total_scores"+
                                                                           "&include[]=public_description"+
