@@ -52,7 +52,7 @@ func  chooseTab(courseMasterGrids []ui.Grid, tabpane *widgets.TabPane, masterGri
   // log.Panic(contentGrid.Title)
 }
 
-func  handleSpace(courseMasterGrids []ui.Grid, courseOverviewGrids []ui.Grid, courseGradeGrids []ui.Grid, courseAnnouncementGrids []ui.Grid, courseSyllabusGrids []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
+func  handleSpace(courseMasterGrids []ui.Grid, courseOverviewGrids []ui.Grid, courseGradeGrids []ui.Grid, courseAnnouncementGrids []ui.Grid, courseSyllabusGrids []ui.Grid, courseAssignmentGrids []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
   // Substitute the current grid for what the user has selected
 
   // If we click the dashboard 
@@ -81,6 +81,10 @@ func  handleSpace(courseMasterGrids []ui.Grid, courseOverviewGrids []ui.Grid, co
     } else if itemStr == "Syllabus" {
       contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
       contentGrid.Items[1].Entry = &courseSyllabusGrids[tabpane.ActiveTabIndex-1]
+      masterGrid.Items[1].Entry = contentGrid
+    } else if itemStr == "Assignments" {
+      contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
+      contentGrid.Items[1].Entry = &courseAssignmentGrids[tabpane.ActiveTabIndex-1]
       masterGrid.Items[1].Entry = contentGrid
     } else {
       contentGrid.Items[1].Entry = placeholder()
@@ -225,7 +229,7 @@ func main() {
       case "<Enter>":
         chooseTab(courseMasterGrids, tabpane, masterGrid, contentGrid)
       case "<Space>":
-        handleSpace(courseMasterGrids, courseOverviewGrids, courseGradeGrids, courseAnnouncementGrids, courseSyllabusGrids, tabpane, masterGrid, contentGrid)
+        handleSpace(courseMasterGrids, courseOverviewGrids, courseGradeGrids, courseAnnouncementGrids, courseSyllabusGrids, courseAssignmentGrids, tabpane, masterGrid, contentGrid)
       case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				masterGrid.SetRect(0, 0, payload.Width, payload.Height)

@@ -21,13 +21,14 @@ import (
 func createAssignmentTable(assignments *[]Assignment) *widgets.Table {
 
   var tableData [][]string
-  header := []string{"Name",  "Score"}
+  header := []string{"Name", "Due at" ,"Score"}
   for _, assn := range *assignments {
     var assignmentData []string
     assignmentData = append(assignmentData, assn.Name)
     // percentScored := float64(assn.Submission.Score/assn.PointsPossible)*100
     scoreString := fmt.Sprint(assn.Submission.EnteredScore)+"/"+fmt.Sprint(assn.PointsPossible)
-    assignmentData = append(assignmentData, scoreString)
+    dueAt := assn.DueAt.Local().Format("1/2 4:05 PM")
+    assignmentData = append(assignmentData, dueAt, scoreString)
     tableData = append(tableData, assignmentData)
   }
   tableData = append(tableData, header)
@@ -37,7 +38,7 @@ func createAssignmentTable(assignments *[]Assignment) *widgets.Table {
   }
 
   assignmentTable := widgets.NewTable()
-  assignmentTable.Title = "Scores:"
+  assignmentTable.Title = "Assignments:"
   assignmentTable.Rows = tableData
 	assignmentTable.TextStyle = ui.NewStyle(ui.ColorWhite)
 	assignmentTable.RowSeparator = true
