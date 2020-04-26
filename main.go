@@ -132,7 +132,6 @@ func updateMasterGrid(masterGrid *ui.Grid, tabpane *widgets.TabPane, contentGrid
 }
 
 func main() {
-  
   // Initialize temui
   if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
