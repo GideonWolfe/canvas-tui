@@ -6,6 +6,8 @@ canvas-tui is a terminal interface that allows you to view statistics scraped fr
 
 The goal of this project is to not only allow easy viewing of upcoming assignments and due dates, but to provide new metrics and data visualizations that are not included in the default canvas interface. 
 
+![grades](https://i.imgur.com/fd6Sz7t.png)
+
 # Usage
 
 The top bar is called the `tab bar`, and there should be one tab per enrolled course, plus a dashboard. You can use the `h` and `l` keys to navigate left and right respectively.
