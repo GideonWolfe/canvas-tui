@@ -65,6 +65,17 @@ func createGradeTable(assignments *[]Assignment) *widgets.Table {
 
 func createAGBreakdown(assignments *[]Assignment, assignmentGroups *[]AssignmentGroup) *widgets.Plot {
 
+
+  backup := widgets.NewPlot()
+	backup.Title = "Not enough data"
+  backup.Data = make([][]float64, 1)
+	backup.Data =[][]float64{{1, 2, 3, 4, 5}}
+	backup.AxesColor = ui.ColorWhite
+	backup.LineColors[0] = ui.ColorGreen
+  var placeholder []float64
+  placeholder = append(placeholder, 5.0)
+
+
   p0 := widgets.NewPlot()
 	p0.Title = "Score by Assignment Group"
   var dataLabels []int
@@ -99,6 +110,10 @@ func createAGBreakdown(assignments *[]Assignment, assignmentGroups *[]Assignment
   }
 
   // log.Panic(p0.Data, assignmentDict)
+  if len(p0.Data) <= 1 {
+    return backup
+  }
+
   return p0
 }
 
