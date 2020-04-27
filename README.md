@@ -12,6 +12,17 @@ The top bar is called the `tab bar`, and there should be one tab per enrolled co
 
 On a course page, you can use `j` and `k` to scroll down and up the list of pages provided by the canvas course. press `Space` to select a page. Currently only a few generic page types are supported for native viewing. I will soon implement an "open in browser" functionality for those pages that are impractical to display.
 
+# Configuration
+
+TO generate a new canvas token, head to your Canvas Settings -> Approved Integrations -> Generate New Token.
+
+Name it whatever you want, but save the generated token. The `config.yaml` file should be in `$HOME/.config/canvas-tui`, with the following contents:
+
+```yaml
+canvasdomain: "https://your.schools.canvas.com"
+canvastoken: "token from earlier"
+```
+
 # TODO list
 
 - [ ] Fix score line chart (waiting on PR in termui)
