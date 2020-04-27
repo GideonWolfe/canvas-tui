@@ -8,7 +8,7 @@ The goal of this project is to not only allow easy viewing of upcoming assignmen
 
 # Usage
 
-The top bar is called the `tab bar`, and there should be one tab per enrolled course, plus a dashboard. You can use the 'h' and 'l' keys to navigate left and right respectively.
+The top bar is called the `tab bar`, and there should be one tab per enrolled course, plus a dashboard. You can use the `h` and `l` keys to navigate left and right respectively.
 
 On a course page, you can use `j` and `k` to scroll down and up the list of pages provided by the canvas course. press `Space` to select a page. Currently only a few generic page types are supported for native viewing. I will soon implement an "open in browser" functionality for those pages that are impractical to display.
 
