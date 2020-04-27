@@ -50,7 +50,7 @@ func createSyllabusWindow(course Course) *widgets.Paragraph {
 func createScorePlot(course Course, assignments *[]Assignment) *widgets.Plot {
   
   p0 := widgets.NewPlot()
-	p0.Title = "No Assignments Graded"
+	p0.Title = "Not enough data"
   p0.Data = make([][]float64, 1)
 	p0.Data =[][]float64{{1, 2, 3, 4, 5}}
 	p0.AxesColor = ui.ColorWhite

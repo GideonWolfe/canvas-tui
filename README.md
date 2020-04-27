@@ -27,5 +27,5 @@ canvastoken: "token from earlier"
 
 - [ ] Fix score line chart (waiting on PR in termui)
 - [ ] Scrollable widgets (syllabus, grades, etc)
-- [ ] Fix old classes (mostly labs) sticking around in courses
+- [x] Fix old classes (mostly labs) sticking around in courses
 - [ ] Fix grade table formatting bug
