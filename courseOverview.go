@@ -241,7 +241,9 @@ func createCourseOverviewGrid(course Course, assignments *[]Assignment, announce
   var overviewText string = "Professor: "+course.Teachers[0].DisplayName+"\n" +
                             "Students: "+strconv.FormatInt(int64(course.TotalStudents), 10)+"\n" +
                             "Role: "+course.Enrollments[0].Type+"\n" + 
-                            "Started At: "+course.StartAt.Format("Jan 2, 2006")+"\n"
+                            "Term: "+course.Term.Name+"\n" +
+                            "Started At: "+course.StartAt.Local().Format("Jan 2, 2006")+"\n" + 
+                            "Ends At: "+course.Term.EndAt.Local().Format("Jan 2, 2006")+"\n"
                             // "Calendar: "+course.Calendar.Ics+"\n" +
   // dummy placeholder widget
   p0 := widgets.NewParagraph()
