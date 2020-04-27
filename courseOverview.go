@@ -235,7 +235,7 @@ func createCoursePieChart(assignmentGroups *[]AssignmentGroup) *widgets.PieChart
 
 // based on an input course object, this function generates 
 // a grid with widgets populated with data from the course
-func createCourseOverviewGrid(course Course, assignments *[]Assignment, announcements *[]Announcement) *ui.Grid {
+func createCourseOverviewGrid(course Course, assignments *[]Assignment, announcements *[]Announcement, assignmentGroups *[]AssignmentGroup) *ui.Grid {
 
 
   var overviewText string = "Professor: "+course.Teachers[0].DisplayName+"\n" +
@@ -253,7 +253,7 @@ func createCourseOverviewGrid(course Course, assignments *[]Assignment, announce
 
   assignmentProgressBar := createAssignmentProgressBar(course, assignments)
 
-  var assignmentGroups *[]AssignmentGroup = fetchAssignmentGroups(course.ID)
+  // var assignmentGroups *[]AssignmentGroup = fetchAssignmentGroups(course.ID)
 
   pc := createCoursePieChart(assignmentGroups)
 

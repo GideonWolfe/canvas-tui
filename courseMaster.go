@@ -21,7 +21,7 @@ import (
 
 // based on an input course object, this function generates 
 // a grid with widgets populated with data from the course
-func createCourseGrid(course Course, assignments *[]Assignment, announcements *[]Announcement) *ui.Grid {
+func createCourseGrid(course Course, assignments *[]Assignment, announcements *[]Announcement, assignmentGroups *[]AssignmentGroup) *ui.Grid {
 
   // var assignments *[]Assignment = fetchAssignments(course.ID)
 
@@ -46,7 +46,7 @@ func createCourseGrid(course Course, assignments *[]Assignment, announcements *[
   courseGrid.Set(
 		ui.NewRow(1.0, 
 			ui.NewCol(1.0/6, l), // left column for pages
-			ui.NewCol(5.0/6,createCourseOverviewGrid(course, assignments, announcements)), // column for everything else
+			ui.NewCol(5.0/6,createCourseOverviewGrid(course, assignments, announcements, assignmentGroups)), // column for everything else
     ),
   )
 

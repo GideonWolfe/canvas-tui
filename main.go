@@ -161,6 +161,9 @@ func main() {
   // one list of announcements per course
   var announcementMatrix [][]Announcement
 
+  // one list of announcements per course
+  var assignmentGroupMatrix [][]AssignmentGroup
+
   // one master grid per course
   var courseMasterGrids []ui.Grid
 
@@ -185,14 +188,15 @@ func main() {
     if crs.EndAt.IsZero() {
       assignmentsMatrix = append(assignmentsMatrix, *fetchAssignments(crs.ID))
       announcementMatrix = append(announcementMatrix, *fetchAnnouncements(crs.ID))
+      assignmentGroupMatrix = append(assignmentGroupMatrix, *fetchAssignmentGroups(crs.ID))
     }
   }
   i := 0
   for _, crs := range *courses {
     if crs.EndAt.IsZero() {
-      courseMasterGrids = append(courseMasterGrids, *createCourseGrid(crs, &assignmentsMatrix[i], &announcementMatrix[i]))
-      courseOverviewGrids = append(courseOverviewGrids, *createCourseOverviewGrid(crs, &assignmentsMatrix[i], &announcementMatrix[i]))
-      courseGradeGrids = append(courseGradeGrids, *createGradeGrid(crs))
+      courseMasterGrids = append(courseMasterGrids, *createCourseGrid(crs, &assignmentsMatrix[i], &announcementMatrix[i], &assignmentGroupMatrix[i]))
+      courseOverviewGrids = append(courseOverviewGrids, *createCourseOverviewGrid(crs, &assignmentsMatrix[i], &announcementMatrix[i], &assignmentGroupMatrix[i]))
+      courseGradeGrids = append(courseGradeGrids, *createGradeGrid(crs, &assignmentsMatrix[i], &assignmentGroupMatrix[i]))
       courseAnnouncementGrids = append(courseAnnouncementGrids, *createAnnouncementGrid(crs, &announcementMatrix[i]))
       courseSyllabusGrids = append(courseSyllabusGrids, *createSyllabusGrid(crs))
       courseAssignmentGrids = append(courseAssignmentGrids, *createAssignmentGrid(crs, &assignmentsMatrix[i]))
