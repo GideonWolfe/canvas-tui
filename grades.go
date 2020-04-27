@@ -78,6 +78,8 @@ func createAGBreakdown(assignments *[]Assignment, assignmentGroups *[]Assignment
 
   p0 := widgets.NewPlot()
 	p0.Title = "Score by Assignment Group"
+  p0.LineColors[0] = ui.ColorCyan
+  p0.HorizontalScale = 6
   var dataLabels []int
 
   // create a dictionary of assignment groups and their IDs
