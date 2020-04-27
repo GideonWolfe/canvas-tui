@@ -49,7 +49,6 @@ func  chooseTab(courseMasterGrids []ui.Grid, tabpane *widgets.TabPane, masterGri
   }
   
   ui.Render(masterGrid)
-  // log.Panic(contentGrid.Title)
 }
 
 func  handleSpace(courseMasterGrids []ui.Grid, courseOverviewGrids []ui.Grid, courseGradeGrids []ui.Grid, courseAnnouncementGrids []ui.Grid, courseSyllabusGrids []ui.Grid, courseAssignmentGrids []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid) {
@@ -90,9 +89,6 @@ func  handleSpace(courseMasterGrids []ui.Grid, courseOverviewGrids []ui.Grid, co
       contentGrid.Items[1].Entry = placeholder()
       masterGrid.Items[1].Entry = contentGrid
     } 
-
-
-
   }
   
   ui.Render(masterGrid)
@@ -204,6 +200,7 @@ func main() {
     }
   }
 
+  // log.Panic(courseMasterGrids)
 
   // Event polling loop
   tickerCount := 1

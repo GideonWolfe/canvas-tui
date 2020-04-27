@@ -6,7 +6,7 @@ import (
 	// "net/http"
 	// "github.com/spf13/viper"
 	"fmt"
-  // "log"
+  _ "log"
 	"math"
 	"strconv"
   // "time"
@@ -55,6 +55,21 @@ func createScorePlot(course Course, assignments *[]Assignment) *widgets.Plot {
 	p0.Data =[][]float64{{1, 2, 3, 4, 5}}
 	p0.AxesColor = ui.ColorWhite
 	p0.LineColors[0] = ui.ColorGreen
+  var placeholder []float64
+  placeholder = append(placeholder, 5.0)
+
+
+
+  p1 := widgets.NewPlot()
+	p1.Title = "No graded assignments found"
+	p1.Marker = widgets.MarkerDot
+	p1.Data = [][]float64{[]float64{1, 2, 3, 4, 5}}
+	p1.SetRect(50, 0, 75, 10)
+	p1.DotMarkerRune = '+'
+	p1.AxesColor = ui.ColorWhite
+	p1.LineColors[0] = ui.ColorYellow
+	p1.DrawDirection = widgets.DrawLeft
+
 
   
   var dataList [][]float64
@@ -69,9 +84,10 @@ func createScorePlot(course Course, assignments *[]Assignment) *widgets.Plot {
   }
   dataList = append(dataList, plotData)
 
-  // if course.CourseCode == "CSCI 461" {
-    // log.Panic(len(plotData))
-  // }
+  // hack if no graded assignments
+  if len(plotData) == 0 {
+    return p1
+  }
 
   p3 := widgets.NewPlot()
 	p3.Title = "Assignment Score(%) Over Time"
