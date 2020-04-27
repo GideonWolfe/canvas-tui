@@ -6,7 +6,7 @@ import (
 	// "net/http"
 	// "github.com/spf13/viper"
 	"fmt"
-  _ "log"
+  // "log"
 	"math"
 	"strconv"
   // "time"
@@ -75,20 +75,25 @@ func createScorePlot(course Course, assignments *[]Assignment) *widgets.Plot {
   var dataList [][]float64
   var plotData []float64
   for _, assn := range *assignments {
-    if !assn.Submission.SubmittedAt.IsZero() {
-      // if !assn.Submission.GradedAt.IsZero()  { 
-      // TODO An empty list makes a segfault, sending placeholder data does not work!!!
-        plotData = append(plotData, (assn.Submission.Score/float64(assn.PointsPossible))*100)
-      // }
+    if !assn.Submission.SubmittedAt.IsZero() { 
+      if !assn.Submission.GradedAt.IsZero()  { // filter out nongraded assignments
+        percent := assn.Submission.Score/float64(assn.PointsPossible)*100
+        if assn.PointsPossible > 0  && percent != 0 {
+          plotData = append(plotData, percent)
+        }
+      }
     }
   }
   dataList = append(dataList, plotData)
 
   // hack if no graded assignments
-  if len(plotData) == 0 {
+  if len(plotData) <= 1 {
     return p1
   }
 
+  // if course.CourseCode == "CSCI 347" {
+    // log.Panic(dataList)
+  // }
   p3 := widgets.NewPlot()
 	p3.Title = "Assignment Score(%) Over Time"
   p3.Data = dataList
