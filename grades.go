@@ -31,7 +31,7 @@ func createGradeTable(assignments *[]Assignment) *widgets.Table {
         percentScored := float64(assn.Submission.Score/assn.PointsPossible)*100
         scoreString := fmt.Sprint(assn.Submission.EnteredScore)+"/"+fmt.Sprint(assn.PointsPossible)
         assignmentData = append(assignmentData, scoreString)
-        assignmentData = append(assignmentData, fmt.Sprintf("%.f", percentScored))
+        assignmentData = append(assignmentData, fmt.Sprintf("%.f%%", percentScored))
         tableData = append(tableData, assignmentData)
         if percentScored > 90 {
           gradeTable.RowStyles[i-1] = ui.NewStyle(ui.ColorGreen, ui.ColorClear, ui.ModifierBold)
