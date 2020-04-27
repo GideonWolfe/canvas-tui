@@ -22,7 +22,7 @@ func createGradeTable(assignments *[]Assignment) *widgets.Table {
   gradeTable := widgets.NewTable()
   var tableData [][]string
   header := []string{"Name",  "Score", "%"}
-  i := 0
+  i := 1
   for _, assn := range *assignments {
     if !assn.Submission.SubmittedAt.IsZero() {
       if assn.Submission.Score > 0{
@@ -34,13 +34,14 @@ func createGradeTable(assignments *[]Assignment) *widgets.Table {
         assignmentData = append(assignmentData, fmt.Sprintf("%.f", percentScored))
         tableData = append(tableData, assignmentData)
         if percentScored > 90 {
-          gradeTable.RowStyles[i+1] = ui.NewStyle(ui.ColorGreen, ui.ColorClear, ui.ModifierBold)
+          gradeTable.RowStyles[i-1] = ui.NewStyle(ui.ColorGreen, ui.ColorClear, ui.ModifierBold)
         } else if percentScored > 80 {
-          gradeTable.RowStyles[i+1] = ui.NewStyle(ui.ColorBlue, ui.ColorClear, ui.ModifierBold)
+          gradeTable.RowStyles[i-1] = ui.NewStyle(ui.ColorBlue, ui.ColorClear, ui.ModifierBold)
         } else if percentScored > 70 {
-          gradeTable.RowStyles[i+1] = ui.NewStyle(ui.ColorYellow, ui.ColorClear, ui.ModifierBold)
-        } else if percentScored > 60 {
-          gradeTable.RowStyles[i+1] = ui.NewStyle(ui.ColorRed, ui.ColorClear, ui.ModifierBold)
+          gradeTable.RowStyles[i-1] = ui.NewStyle(ui.ColorYellow, ui.ColorClear, ui.ModifierBold)
+        } else if percentScored <= 60 {
+          // log.Panic(assn.Name)
+          gradeTable.RowStyles[i-1] = ui.NewStyle(ui.ColorRed, ui.ColorClear, ui.ModifierBold)
         }
         i++
       }
@@ -50,6 +51,7 @@ func createGradeTable(assignments *[]Assignment) *widgets.Table {
   // reverse the list
   for i, j := 0, len(tableData)-1; i < j; i, j = i+1, j-1 {
     tableData[i], tableData[j] = tableData[j], tableData[i]
+    gradeTable.RowStyles[i], gradeTable.RowStyles[j] = gradeTable.RowStyles[j], gradeTable.RowStyles[i]
   }
 
   gradeTable.Title = "Scores:"
