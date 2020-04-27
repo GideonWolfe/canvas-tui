@@ -27,7 +27,7 @@ func createMainTabPane(courses *[]Course) *widgets.TabPane {
   var titles []string
   titles = append(titles, "Dashboard")
   for _, crs := range *courses {
-    if crs.EndAt.IsZero() {
+    if crs.EndAt.IsZero() && !crs.Term.EndAt.IsZero() { // second check to filter labs with no terms :(
       titles = append(titles, crs.CourseCode)
     }
   }

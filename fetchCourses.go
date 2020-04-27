@@ -33,6 +33,7 @@ type Course struct {
 	PublicSyllabusToAuth             bool           `json:"public_syllabus_to_auth"`
 	StorageQuotaMb                   int            `json:"storage_quota_mb"`
 	IsPublicToAuthUsers              bool           `json:"is_public_to_auth_users"`
+  Term                             Term           `json:"term"`
 	CourseProgress                   CourseProgress `json:"course_progress"`
 	ApplyAssignmentGroupWeights      bool           `json:"apply_assignment_group_weights"`
 	Sections                         []Sections     `json:"sections"`
@@ -50,11 +51,20 @@ type Course struct {
 	WorkflowState                    string         `json:"workflow_state"`
 	RestrictEnrollmentsToCourseDates bool           `json:"restrict_enrollments_to_course_dates"`
 }
+type Term struct {
+	ID                   int         `json:"id"`
+	Name                 string      `json:"name"`
+	StartAt              time.Time   `json:"start_at"`
+	EndAt                time.Time   `json:"end_at"`
+	CreatedAt            time.Time   `json:"created_at"`
+	WorkflowState        string      `json:"workflow_state"`
+	GradingPeriodGroupID interface{} `json:"grading_period_group_id"`
+}
 type CourseProgress struct {
 	RequirementCount          int         `json:"requirement_count"`
 	RequirementCompletedCount int         `json:"requirement_completed_count"`
-	NextRequirementURL        interface{} `json:"next_requirement_url"`
-	CompletedAt               interface{} `json:"completed_at"`
+	NextRequirementURL        time.Time   `json:"next_requirement_url"`
+	CompletedAt               time.Time   `json:"completed_at"`
 }
 type Sections struct {
 	ID             int         `json:"id"`
@@ -109,6 +119,7 @@ func fetchCourses() *[]Course {
                                                                           "&include[]=favorites"+
                                                                           "&include[]=teachers"+
                                                                           "&include[]=tabs"+
+                                                                          "&include[]=term"+
                                                                           "&include[]=course_image"+
                                                                           "&include[]=concluded"
 
