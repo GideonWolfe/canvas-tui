@@ -63,7 +63,7 @@ var courseNames []string
   var courseScores []float64
   var barColors []ui.Color
   for _, crs := range *courses {
-    if crs.EndAt.IsZero() {
+    if crs.EndAt.IsZero() && !crs.Term.EndAt.IsZero()  {
       currentScore := crs.Enrollments[0].ComputedCurrentScore
       courseNames = append(courseNames, crs.CourseCode)
       courseScores = append(courseScores, currentScore)
