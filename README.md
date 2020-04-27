@@ -29,3 +29,4 @@ canvastoken: "token from earlier"
 - [ ] Scrollable widgets (syllabus, grades, etc)
 - [x] Fix old classes (mostly labs) sticking around in courses
 - [ ] Fix grade table formatting bug
+- [ ] Add labels to grade plot (waiting on PR in termui)
