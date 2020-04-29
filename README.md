@@ -31,7 +31,7 @@ Yes, it is quite slow to start up for a TUI application. This is because the **v
 # TODO list
 
 - [ ] Fix score line chart (waiting on PR in termui)
-- [ ] Scrollable widgets (syllabus, grades, etc)
+- [ ] Scrollable widgets (syllabus, grades, etc, waiting on PR in termui)
 - [x] Fix old classes (mostly labs) sticking around in courses
-- [ ] Fix grade table formatting bug
+- [x] Fix grade table formatting bug
 - [ ] Add labels to grade plot (waiting on PR in termui)
