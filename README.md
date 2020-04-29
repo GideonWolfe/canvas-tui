@@ -2,6 +2,8 @@
 
 canvas-tui is a terminal interface that allows you to view statistics scraped from the [Canvas API](https://canvas.instructure.com/doc/api/). 
 
+![](https://i.imgur.com/9W7CjQa.png)
+
 ![Some details obscured for privacy](https://i.imgur.com/Klao8nD.png)
 
 The goal of this project is to not only allow easy viewing of upcoming assignments and due dates, but to provide new metrics and data visualizations that are not included in the default canvas interface. 
