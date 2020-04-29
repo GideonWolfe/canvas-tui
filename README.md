@@ -26,6 +26,7 @@ Name it whatever you want, but save the generated token. The `config.yaml` file 
 canvasdomain: "https://your.schools.canvas.com"
 canvastoken: "token from earlier"
 ```
+Yes, it is quite slow to start up for a TUI application. This is because the **vast** majority of API calls and data processing are happening at startup, so it is limited to the speed of the API. However once loaded, it should be quite snappy.
 
 # TODO list
 
