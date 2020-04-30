@@ -105,28 +105,8 @@ func  handleOpen(courseMasterGrids []ui.Grid, courseOverviewGrids []ui.Grid, cou
   if tabpane.ActiveTabIndex == 0 {
     url = viper.Get("canvasdomain").(string)
   } else {
-    // if we are on the course overview, open the course page
     contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
     url = courses[tabpane.ActiveTabIndex-1].Tabs[contentGrid.Items[0].Entry.(*widgets.List).SelectedRow].FullURL
-    // listLabel := strings.ToLower(courses[tabpane.ActiveTabIndex-1].Tabs[contentGrid.Items[0].Entry.(*widgets.List).SelectedRow].Label)
-    // if contentGrid.Items[1].Entry.(*ui.Grid).Title == "Course Overview Grid" {
-      // url = viper.Get("canvasdomain").(string)+"courses/"+strconv.Itoa(courses[tabpane.ActiveTabIndex-1].ID)
-    // } else if contentGrid.Items[1].Entry.(*ui.Grid).Title == "Course Grade Grid" {
-      // url = viper.Get("canvasdomain").(string)+"courses/"+strconv.Itoa(courses[tabpane.ActiveTabIndex-1].ID)+"/grades"
-    // } else if contentGrid.Items[1].Entry.(*ui.Grid).Title == "Course Assignment Grid" {
-      // url = viper.Get("canvasdomain").(string)+"courses/"+strconv.Itoa(courses[tabpane.ActiveTabIndex-1].ID)+"/assignments"
-    // } else if contentGrid.Items[1].Entry.(*ui.Grid).Title == "Course Syllabus Grid" {
-      // url = viper.Get("canvasdomain").(string)+"courses/"+strconv.Itoa(courses[tabpane.ActiveTabIndex-1].ID)+"/assignments/syllabus"
-    // } else if listLabel == "discussions" {
-      // // url = viper.Get("canvasdomain").(string)+"courses/"+strconv.Itoa(courses[tabpane.ActiveTabIndex-1].ID)+"/discussion_topics"
-      // url = courses[tabpane.ActiveTabIndex-1].Tabs[contentGrid.Items[0].Entry.(*widgets.List).SelectedRow].FullURL
-    // } else if listLabel == "chat" {
-      // // url = viper.Get("canvasdomain").(string)+"courses/"+strconv.Itoa(courses[tabpane.ActiveTabIndex-1].ID)+"/discussion_topics"
-      // url = courses[tabpane.ActiveTabIndex-1].Tabs[contentGrid.Items[0].Entry.(*widgets.List).SelectedRow].FullURL
-    // } else {
-      // // url = viper.Get("canvasdomain").(string)+"courses/"+strconv.Itoa(courses[tabpane.ActiveTabIndex-1].ID)+"/"+listLabel
-      // url = courses[tabpane.ActiveTabIndex-1].Tabs[contentGrid.Items[0].Entry.(*widgets.List).SelectedRow].FullURL
-    // }
   }
 
   // actually open the URL

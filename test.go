@@ -30,7 +30,7 @@ func placeholder() *ui.Grid {
 	assignmentGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
 	assignmentGrid.SetRect(0, 0, termWidth, termHeight)
-  assignmentGrid.Title = "Course Overview Grid"
+  assignmentGrid.Title = "Course Something Grid"
 
   assignmentGrid.Set(
 		ui.NewRow(1.0, 

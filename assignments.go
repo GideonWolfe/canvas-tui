@@ -54,7 +54,7 @@ func createAssignmentGrid(course Course, assignments *[]Assignment) *ui.Grid {
   assignmentGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
 	assignmentGrid.SetRect(0, 0, termWidth, termHeight)
-  assignmentGrid.Title = "Course Overview Grid"
+  assignmentGrid.Title = "Course Assignment Grid"
   assignmentGrid.Set(
 		ui.NewRow(1.0, 
 			ui.NewCol(1.0, createAssignmentTable(assignments)), 
