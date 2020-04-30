@@ -14,7 +14,7 @@ The goal of this project is to not only allow easy viewing of upcoming assignmen
 
 The top bar is called the `tab bar`, and there should be one tab per enrolled course, plus a dashboard. You can use the `h` and `l` keys to navigate left and right respectively, and `Enter` to make a selection.
 
-On a course page, you can use `j` and `k` to scroll down and up the list of pages provided by the canvas course. press `Space` to select a page. Currently only a few generic page types are supported for native viewing. I will soon implement an "open in browser" functionality for those pages that are impractical to display.
+On a course page, you can use `j` and `k` to scroll down and up the list of pages provided by the canvas course. press `Space` to select a page. Currently only a few generic page types are supported for native viewing. To open any page in the browser, simply press `o` while viewing that page.
 
 # Configuration
 
@@ -34,4 +34,5 @@ Yes, it is quite slow to start up for a TUI application. This is because the **v
 - [ ] Scrollable widgets (syllabus, grades, etc, waiting on PR in termui)
 - [x] Fix old classes (mostly labs) sticking around in courses
 - [x] Fix grade table formatting bug
+- [x] Open pages in browser
 - [ ] Add labels to grade plot (waiting on PR in termui)
