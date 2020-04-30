@@ -2,12 +2,14 @@ package main
 
 import (
 	"log"
-	// "math"
   "fmt"
   "time"
   "github.com/spf13/viper"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
+  "runtime"
+  "os/exec"
+  "strconv"
 )
 
 // Reads the config file
@@ -95,6 +97,39 @@ func  handleSpace(courseMasterGrids []ui.Grid, courseOverviewGrids []ui.Grid, co
   // log.Panic(contentGrid.Title)
 }
 
+// handles opeining a selection in the browser
+// func handleOpen(){
+func  handleOpen(courseMasterGrids []ui.Grid, courseOverviewGrids []ui.Grid, courseGradeGrids []ui.Grid, courseAnnouncementGrids []ui.Grid, courseSyllabusGrids []ui.Grid, courseAssignmentGrids []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid, courses []Course) {
+  // if we are on the dashboard, open canvas home
+  var url string
+  if tabpane.ActiveTabIndex == 0 {
+    url = viper.Get("canvasdomain").(string)
+  } else {
+    // if we are on the course overview, open the course page
+    contentGrid = &courseMasterGrids[tabpane.ActiveTabIndex-1]
+    if contentGrid.Items[1].Entry.(*ui.Grid).Title == "Course Overview Grid" {
+      url = viper.Get("canvasdomain").(string)+"courses/"+strconv.Itoa(courses[tabpane.ActiveTabIndex-1].ID)
+    } else if contentGrid.Items[1].Entry.(*ui.Grid).Title == "Course Grade Grid" {
+      url = viper.Get("canvasdomain").(string)+"courses/"+strconv.Itoa(courses[tabpane.ActiveTabIndex-1].ID)+"/grades"
+    }
+  }
+
+  // actually open the URL
+  var err error
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func  menuScroll(coursePages []ui.Grid, tabpane *widgets.TabPane, masterGrid *ui.Grid, contentGrid *ui.Grid, direction string) {
   // Substitute the current grid for what the user has selected
@@ -138,6 +173,13 @@ func main() {
   readConfig()
 
   var courses *[]Course = fetchCourses()
+  var activeCourses []Course // variable needed to accurately choose/open courses from menu
+  for _, crs := range *courses {
+    if crs.EndAt.IsZero() && !crs.Term.EndAt.IsZero(){
+      activeCourses = append(activeCourses, crs)
+    }
+  }
+
   
   // declare master grid and set terminal dimensions
 	masterGrid := ui.NewGrid()
@@ -185,7 +227,7 @@ func main() {
 
   // first fetch all the assignments to reduce redundant API calls
   for _, crs := range *courses {
-    if crs.EndAt.IsZero() {
+    if crs.EndAt.IsZero() && !crs.Term.EndAt.IsZero() {
       assignmentsMatrix = append(assignmentsMatrix, *fetchAssignments(crs.ID))
       announcementMatrix = append(announcementMatrix, *fetchAnnouncements(crs.ID))
       assignmentGroupMatrix = append(assignmentGroupMatrix, *fetchAssignmentGroups(crs.ID))
@@ -193,7 +235,7 @@ func main() {
   }
   i := 0
   for _, crs := range *courses {
-    if crs.EndAt.IsZero() {
+    if crs.EndAt.IsZero() && !crs.Term.EndAt.IsZero(){
       courseMasterGrids = append(courseMasterGrids, *createCourseGrid(crs, &assignmentsMatrix[i], &announcementMatrix[i], &assignmentGroupMatrix[i]))
       courseOverviewGrids = append(courseOverviewGrids, *createCourseOverviewGrid(crs, &assignmentsMatrix[i], &announcementMatrix[i], &assignmentGroupMatrix[i]))
       courseGradeGrids = append(courseGradeGrids, *createGradeGrid(crs, &assignmentsMatrix[i], &assignmentGroupMatrix[i]))
@@ -216,6 +258,9 @@ func main() {
       switch e.ID {
       case "q", "<C-c>":
         return
+      case "o":
+        // handleOpen(courseMasterGrids, courseOverviewGrids, courseGradeGrids, courseAnnouncementGrids, courseSyllabusGrids, courseAssignmentGrids, tabpane, masterGrid, contentGrid, *courses)
+        handleOpen(courseMasterGrids, courseOverviewGrids, courseGradeGrids, courseAnnouncementGrids, courseSyllabusGrids, courseAssignmentGrids, tabpane, masterGrid, contentGrid, activeCourses)
       case "h":
         tabpane.FocusLeft() // changes the currently selected tab
         ui.Render(tabpane) // quickly redraws tabpane

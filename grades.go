@@ -125,7 +125,7 @@ func createGradeGrid(course Course, assignments *[]Assignment, assignmentGroups 
   gradeGrid := ui.NewGrid()
 	termWidth, termHeight := ui.TerminalDimensions()
 	gradeGrid.SetRect(0, 0, termWidth, termHeight)
-  gradeGrid.Title = "Course Overview Grid"
+  gradeGrid.Title = "Course Grade Grid"
   gradeGrid.Set(
 		ui.NewRow(1.0, 
 			ui.NewRow(2.0/3, createGradeTable(assignments)), 
