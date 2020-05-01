@@ -14,8 +14,10 @@ import (
 	// "time"
 	// "bytes"
   strip "github.com/grokify/html-strip-tags-go"
-	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
+  ui "github.com/gizak/termui/v3"
+  "github.com/gizak/termui/v3/widgets"
+	// ui "github.com/GideonWolfe/termui/v3"
+	// "github.com/GideonWolfe/termui/v3/widgets"
 )
 
 func createAnnouncementWindow(course Course, announcements *[]Announcement) *widgets.Paragraph {
@@ -91,9 +93,6 @@ func createScorePlot(course Course, assignments *[]Assignment) *widgets.Plot {
     return p1
   }
 
-  // if course.CourseCode == "CSCI 347" {
-    // log.Panic(dataList)
-  // }
   p3 := widgets.NewPlot()
 	p3.Title = "Assignment Score(%) Over Time"
   p3.Data = dataList

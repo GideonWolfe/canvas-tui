@@ -5,8 +5,10 @@ import (
   "fmt"
   "time"
   "github.com/spf13/viper"
-	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
+  ui "github.com/gizak/termui/v3"
+  "github.com/gizak/termui/v3/widgets"
+	// ui "github.com/GideonWolfe/termui/v3"
+	// "github.com/GideonWolfe/termui/v3/widgets"
   "runtime"
   "os/exec"
   // "strconv"
@@ -182,16 +184,6 @@ func main() {
 	termWidth, termHeight := ui.TerminalDimensions()
 	masterGrid.SetRect(0, 0, termWidth, termHeight)
 
-  // declare tab widget
-  tabpane := createMainTabPane(courses)
-
-  // contentGrid := createDashboardGrid("front page")
-  dashboard := createDashboardGrid(courses)
-  contentGrid := dashboard
-
-  // Do the initial drawing of the main dash
-  masterGrid = updateMasterGrid(masterGrid, tabpane, contentGrid)
-
   // one list of assignments per course
   var assignmentsMatrix [][]Assignment
 
@@ -200,6 +192,16 @@ func main() {
 
   // one list of announcements per course
   var assignmentGroupMatrix [][]AssignmentGroup
+
+  // first fetch all the assignments to reduce redundant API calls
+  for _, crs := range activeCourses {
+  // for _, crs := range *courses {
+    if crs.EndAt.IsZero() && !crs.Term.EndAt.IsZero() {
+      assignmentsMatrix = append(assignmentsMatrix, *fetchAssignments(crs.ID))
+      announcementMatrix = append(announcementMatrix, *fetchAnnouncements(crs.ID))
+      assignmentGroupMatrix = append(assignmentGroupMatrix, *fetchAssignmentGroups(crs.ID))
+    }
+  }
 
   // one master grid per course
   var courseMasterGrids []ui.Grid
@@ -219,15 +221,16 @@ func main() {
   // one assignment grid per course
   var courseAssignmentGrids []ui.Grid
 
+  // declare tab widget
+  tabpane := createMainTabPane(courses)
 
-  // first fetch all the assignments to reduce redundant API calls
-  for _, crs := range *courses {
-    if crs.EndAt.IsZero() && !crs.Term.EndAt.IsZero() {
-      assignmentsMatrix = append(assignmentsMatrix, *fetchAssignments(crs.ID))
-      announcementMatrix = append(announcementMatrix, *fetchAnnouncements(crs.ID))
-      assignmentGroupMatrix = append(assignmentGroupMatrix, *fetchAssignmentGroups(crs.ID))
-    }
-  }
+  dashboard := createDashboardGrid(&activeCourses, assignmentsMatrix)
+  contentGrid := dashboard
+
+  // Do the initial drawing of the main dash
+  masterGrid = updateMasterGrid(masterGrid, tabpane, contentGrid)
+  
+  
   i := 0
   for _, crs := range *courses {
     if crs.EndAt.IsZero() && !crs.Term.EndAt.IsZero(){

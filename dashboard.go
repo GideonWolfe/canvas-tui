@@ -3,16 +3,71 @@ package main
 import (
   // "encoding/json"
   // "io/ioutil"
-	// "log"
+  // "log"
 	// "net/http"
   // "github.com/spf13/viper"
   "fmt"
   // "math"
   // "time"
   // "bytes"
-	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
+  ui "github.com/gizak/termui/v3"
+  "github.com/gizak/termui/v3/widgets"
+  // ui "github.com/GideonWolfe/termui/v3"
+  // "github.com/GideonWolfe/termui/v3/widgets"
 )
+
+func createCourseScorePlot(assignmentsMatrix [][]Assignment, courses *[]Course) *widgets.Plot {
+
+  backup := widgets.NewPlot()
+	backup.Title = "Not enough data"
+  backup.Data = make([][]float64, 1)
+	backup.Data =[][]float64{{1, 2, 3, 4, 5}}
+	backup.AxesColor = ui.ColorWhite
+	backup.LineColors[0] = ui.ColorCyan
+  var placeholder []float64
+  placeholder = append(placeholder, 5.0)
+
+  p0 := widgets.NewPlot()
+	p0.Title = "Score by Course"
+  p0.LineColors[0] = ui.ColorCyan
+  p0.HorizontalScale = 6
+  var dataLabels []string
+
+  count := 0
+  courseDict := make(map[string][]float64)
+  for _, crs := range *courses {
+    if count <= len(assignmentsMatrix) {
+      var scoreList []float64
+      var assignments []Assignment = assignmentsMatrix[count]
+      for _, assn := range assignments {
+        if !assn.Submission.SubmittedAt.IsZero() {
+          if assn.Submission.Score > 0 && assn.PointsPossible != 0{
+            percentScored := float64(assn.Submission.Score/assn.PointsPossible)*100
+            scoreList = append(scoreList, percentScored)
+          }
+        }
+      }
+      count++
+      courseDict[crs.CourseCode] = scoreList
+    }
+  }
+
+
+  var data [][]float64
+  for course, scores := range courseDict {
+    if len(scores) != 0 {
+      dataLabels = append(dataLabels, course)
+      data = append(data, scores)
+    }
+  }
+
+  p0.Data = data
+  p0.DataLabels = dataLabels
+  if len(p0.Data) <= 1 {
+    return backup
+  }
+  return p0
+}
 
 func createTodoTableDash(courses *[]Course) *widgets.Table {
 
@@ -134,7 +189,7 @@ func createSummaryStackedBarchart(courses *[]Course) *widgets.StackedBarChart {
 }
 
 
-func createDashboardGrid(courses *[]Course) *ui.Grid {
+func createDashboardGrid(courses *[]Course, assignmentsMatrix [][]Assignment) *ui.Grid {
   // dummy placeholder widget
   p0 := widgets.NewParagraph()
 	// p0.Text = someVal
@@ -148,6 +203,8 @@ func createDashboardGrid(courses *[]Course) *ui.Grid {
   // sbc := createSummayStackedBarchart(courses)
 
   todoTable := createTodoTableDash(courses)
+
+  scorePlot := createCourseScorePlot(assignmentsMatrix, courses)
   
 	dashboardGrid := ui.NewGrid()
   dashboardGrid.Title = "Dashboard"
@@ -158,9 +215,8 @@ func createDashboardGrid(courses *[]Course) *ui.Grid {
 			ui.NewCol(1.0/3, cl),
 			ui.NewCol(2.0/3, bc),
 		),
-		ui.NewRow(3.0/4,
-			ui.NewCol(1.0, todoTable),
-		),
+    ui.NewRow(2.0/4, todoTable),
+    ui.NewRow(1.0/4, scorePlot),
   )
   return dashboardGrid
 }

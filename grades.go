@@ -12,8 +12,10 @@ import (
 	// "time"
 	// "bytes"
   "fmt"
-	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
+  ui "github.com/gizak/termui/v3"
+  "github.com/gizak/termui/v3/widgets"
+	// ui "github.com/GideonWolfe/termui/v3"
+	// "github.com/GideonWolfe/termui/v3/widgets"
 )
 
 

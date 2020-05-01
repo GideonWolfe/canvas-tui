@@ -11,8 +11,10 @@ import (
 	// "reflect"
 	// "time"
 	// "bytes"
-	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
+  ui "github.com/gizak/termui/v3"
+  "github.com/gizak/termui/v3/widgets"
+	// ui "github.com/GideonWolfe/termui/v3"
+	// "github.com/GideonWolfe/termui/v3/widgets"
 )
 
 // based on an input course object, this function generates 
