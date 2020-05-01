@@ -28,7 +28,7 @@ func createCourseScorePlot(assignmentsMatrix [][]Assignment, courses *[]Course) 
   placeholder = append(placeholder, 5.0)
 
   p0 := widgets.NewPlot()
-	p0.Title = "Score by Course"
+	p0.Title = "Assignment Score % by Course"
   p0.LineColors[0] = ui.ColorCyan
   p0.HorizontalScale = 6
   var dataLabels []string
