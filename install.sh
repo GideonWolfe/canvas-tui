@@ -12,12 +12,12 @@ read generate
 if [ "$generate" == "y" ]
 then
 
-  if [[ ! -d "$HOME/.config" ]]
+  if [[ ! -d "${XDG_CONFIG_HOME:-$HOME/.config}" ]]
   then
-    mkdir "$HOME/.config"
+    mkdir "${XDG_CONFIG_HOME:-$HOME/.config}"
   fi
 
-  CONFPATH=$HOME/.config/canvas-cli/
+  CONFPATH=${XDG_CONFIG_HOME:-$HOME/.config}/canvas-tui/
 
   if [[ ! -d $CONFPATH ]]
   then
