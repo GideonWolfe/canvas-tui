@@ -199,12 +199,12 @@ func createDashboardGrid(courses *[]Course, assignmentsMatrix [][]Assignment) *u
   cl := canvasLogo()
 
   // render the bar chart with current course grades
-  bc := createSummaryBarchart(courses)
+  bc := createSummaryBarchart(courses) // Problem lies here
   // sbc := createSummayStackedBarchart(courses)
 
   todoTable := createTodoTableDash(courses)
 
-  scorePlot := createCourseScorePlot(assignmentsMatrix, courses)
+  // scorePlot := createCourseScorePlot(assignmentsMatrix, courses)
   
 	dashboardGrid := ui.NewGrid()
   dashboardGrid.Title = "Dashboard"
@@ -216,7 +216,7 @@ func createDashboardGrid(courses *[]Course, assignmentsMatrix [][]Assignment) *u
 			ui.NewCol(2.0/3, bc),
 		),
     ui.NewRow(2.0/4, todoTable),
-    ui.NewRow(1.0/4, scorePlot),
+    ui.NewRow(1.0/4, todoTable), //should be scoreplot once plots are fixed
   )
   return dashboardGrid
 }
