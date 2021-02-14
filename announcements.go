@@ -13,8 +13,8 @@ import (
 	// "bytes"
   // "fmt"
   strip "github.com/grokify/html-strip-tags-go"
-  ui "github.com/gizak/termui/v3"
-  "github.com/gizak/termui/v3/widgets"
+  ui "github.com/gizak/termui"
+  "github.com/gizak/termui/widgets"
 	// ui "github.com/GideonWolfe/termui/v3"
 	// "github.com/GideonWolfe/termui/v3/widgets"
 )
