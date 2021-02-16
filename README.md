@@ -28,6 +28,16 @@ canvastoken: "token from earlier"
 ```
 Yes, it is quite slow to start up for a TUI application. This is because the **vast** majority of API calls and data processing are happening at startup, so it is limited to the speed of the API. However once loaded, it should be quite snappy.
 
+
+# Installation
+
+Run the following commands to install the dependencies:
+
+* `GO111MODULE=on go get github.com/spf13/viper`
+* `go get github.com/gizak/termui`
+* `go get github.com/gizak/termui/widgets`
+* `go get github.com/grokify/html-strip-tags-go`
+
 # TODO list
 
 - [ ] Fix score line chart (waiting on PR in termui)
