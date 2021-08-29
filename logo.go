@@ -17,7 +17,7 @@ import (
     _ "image/jpeg"
     _ "image/png"
 	// ui "github.com/gizak/termui/v3"
-  "github.com/gizak/termui/widgets"
+  "github.com/gizak/termui/v3/widgets"
   // "github.com/GideonWolfe/termui/v3/widgets"
 )
 
